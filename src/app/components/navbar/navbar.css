@@ -1,0 +1,122 @@
+.navbar {
+  width: 100%;
+  height: 50px;
+  box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.5);
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 20px;
+  display: flex;
+}
+.navbar .logo {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100px;
+}
+.navbar .logo a {
+  font-weight: 700;
+  font-size: 25px;
+}
+.navbar .navigation {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  
+  gap: 30px;
+}
+.navbar .navigation .nav-links {
+  display: flex;
+  list-style: none;
+  color: #444;
+  font-weight: 600;
+}
+.navbar .navigation .nav-links a {
+  padding: 0 20px;
+  transition: all 0.3s ease;
+}
+.navbar .navigation .nav-links a:hover {
+  color: rgb(170, 97, 1);
+}
+.navbar .navigation .login-btn {
+  background: #ddd;
+  width: 3px;
+  height: 3px;
+  padding: 15px 15px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+}
+.navbar .navigation .login-btn i {
+  transition: all 0.3s ease;
+}
+.navbar .navigation .login-btn i:hover {
+  color: rgb(170, 97, 1);
+}
+.hamburger{
+    width: 30px;
+    height: 30px;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+    background-color: #ddd;
+    font-weight: 700;
+    padding: 15px 15px ;
+    cursor: pointer;
+}
+.close-hamburger{
+    width: 30px;
+    height: 30px;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+    font-weight: 700;
+    padding: 15px 15px ;
+    cursor: pointer;
+    position: absolute;
+    top: 5%;
+    left: 5%;
+}
+@media (max-width: 725px) {
+  .navbar .navigation .nav-links a {
+    padding: 0 10px;
+  }
+}
+@media (max-width: 590px) {
+  html{
+    overflow-x: hidden;
+  }
+  body{
+    overflow-x: hidden;
+  }
+  .navbar .navigation{
+      background: rgba(61, 60, 60, 0.712);
+      backdrop-filter: blur(10px);
+      color: whitesmoke;
+      flex-direction: column-reverse;
+      text-align: center;
+      transform: translate(1110px, 120px);
+      width: 300px;
+      height: 300px;
+      transition: 0.3s ease;
+    }
+    .navbar .navigation.active{
+        transform: translate(110px,120px);
+    }
+  .hamburger{
+    display: flex;
+  }
+  .close-hamburger{
+    display: flex;
+  }
+  .navbar .navigation .nav-links {
+      flex-direction: column;
+      gap: 10px;
+    }
+    .navbar .navigation .nav-links a{
+        color: whitesmoke;
+    }
+}

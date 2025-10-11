@@ -1,0 +1,85 @@
+.profile-section {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  grid-template-rows: repeat(5, 1fr);
+  gap: 8px;
+  height: 100vh;
+}
+
+.user-personal-info {
+  grid-row: span 4 / span 4;
+}
+.user-personal-info .user-img {
+  width: 100%;
+  height: 110px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.user-personal-info .user-img img {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+}
+
+.user-personal-info .about {
+  margin: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: start;
+}
+.user-personal-info .about h4 {
+  font-size: 22px;
+  color: #333;
+}
+.user-personal-info .about p {
+    white-space: nowrap;
+    margin-left: 20px;
+    text-transform: capitalize;
+}
+.user-personal-info .about p.email{
+    text-transform: lowercase;
+}
+.user-personal-info .about p span {
+  color: #444;
+  margin-right: 20px;
+}
+.user-personal-info .about p span i {
+  margin-right: 5px;
+}
+
+.institute-info {
+  grid-column: span 4 / span 4;
+  grid-row: span 2 / span 2;
+}
+.institute-info .student-table {
+  display: flex;
+  justify-content: center;
+  margin-top: 50px;
+  align-items: center;
+}
+.institute-info .student-table table {
+  border-collapse: collapse;
+  margin: 20px auto;
+  font-family: Arial, sans-serif;
+}
+.institute-info .student-table table td ,.institute-info .student-table table th{
+  padding: 5px 15px;
+  border: 1px solid #555;
+    padding: 10px;
+    text-align: center;
+}
+.institute-info h4 {
+  text-align: start;
+  font-size: 25px;
+  color: #666;
+}
+
+.div3 {
+  grid-column: span 4 / span 4;
+  grid-row: span 2 / span 2;
+  grid-column-start: 2;
+  grid-row-start: 3;
+  background: orange;
+}
