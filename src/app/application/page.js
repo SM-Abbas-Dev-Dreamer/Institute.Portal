@@ -1,5 +1,8 @@
 "use client";
+
 import React, { useState, useEffect } from "react";
+import dynamic from "next/dynamic";
+
 import { auth, db } from "../../../firebaseconfig";
 import {
   doc,
@@ -13,7 +16,9 @@ import {
   orderBy,
 } from "firebase/firestore";
 import { onAuthStateChanged } from "firebase/auth";
-import ReactQuill from "react-quill-new";
+
+// 🔹 Dynamic import for ReactQuill (client-side only)
+const ReactQuill = dynamic(() => import("react-quill-new"), { ssr: false });
 import "react-quill-new/dist/quill.snow.css";
 
 import "./application.css";
@@ -39,6 +44,7 @@ const ApplicationPage = () => {
         setUserData(null);
       }
     });
+
     return () => unsubscribe();
   }, []);
 
