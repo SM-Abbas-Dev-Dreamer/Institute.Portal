@@ -5,6 +5,8 @@ import { auth, db } from "../../../firebaseconfig.js";
 import { useRouter } from "next/navigation";
 import { doc, getDoc } from "firebase/firestore";
 import StudentProfile from "../components/student/student.js";
+import TeacherProfile from "../components/student/teacher.js";
+import AdminProfile from "../components/student/admin.js";
 
 // 🔹 Import role-based components
 
@@ -47,12 +49,12 @@ const ProfilePage = () => {
       {/* 🔹 Role-based Component Rendering */}
       {role === "admin" && (
         <>
-        <h1>Admin</h1>
+        <AdminProfile />
         </>
       )}
       {role === "teacher" && (
           <>
-          <h1>Teacher</h1>
+          <TeacherProfile/>
         </>
       )}
       {role === "student" && (

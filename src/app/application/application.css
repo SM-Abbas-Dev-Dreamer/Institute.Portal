@@ -1,0 +1,122 @@
+/* 🔹 Main container */
+.application-container {
+  max-width: 900px;
+  margin: 40px auto;
+  background: #ffffff;
+  border-radius: 20px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  padding: 30px 40px;
+  font-family: "Poppins", sans-serif;
+}
+
+/* 🔹 Heading */
+.application-container h2 {
+  text-align: center;
+  margin-bottom: 25px;
+  font-size: 26px;
+  color: #333;
+  font-weight: 600;
+}
+
+/* 🔹 Message */
+.message {
+  text-align: center;
+  margin-bottom: 15px;
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.message.success {
+  color: #22c55e;
+}
+
+.message.error {
+  color: #ef4444;
+}
+
+/* 🔹 Quill Editor Styling */
+.ql-container {
+  border-radius: 10px;
+  border: 1px solid #ddd;
+  min-height: 150px;
+  background-color: #fafafa;
+}
+
+.ql-toolbar {
+  border-radius: 10px 10px 0 0;
+  border: 1px solid #ddd;
+  background-color: #f8f9fa;
+}
+
+/* 🔹 Send button */
+button {
+  display: block;
+  width: 200px;
+  margin: 20px auto 40px auto;
+  background-color: #2563eb;
+  color: white;
+  border: none;
+  padding: 12px 0;
+  border-radius: 10px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+button:hover {
+  background-color: #1d4ed8;
+}
+
+/* 🔹 Recent Applications Table */
+.recent-applications {
+  margin-top: 30px;
+}
+
+.recent-applications h3 {
+  text-align: center;
+  font-size: 22px;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+thead {
+  background-color: #2563eb;
+  color: white;
+}
+
+th, td {
+  text-align: left;
+  padding: 12px 16px;
+  font-size: 15px;
+}
+
+tbody tr:nth-child(even) {
+  background-color: #f2f6ff;
+}
+
+tbody tr:hover {
+  background-color: #e6ecff;
+}
+
+/* 🔹 Status colors */
+.status.pending {
+  color: #f59e0b;
+  font-weight: 600;
+}
+
+.status.approved {
+  color: #16a34a;
+  font-weight: 600;
+}
+
+.status.rejected {
+  color: #dc2626;
+  font-weight: 600;
+}

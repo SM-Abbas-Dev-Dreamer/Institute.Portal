@@ -1,0 +1,146 @@
+.attendance-page {
+  display: flex;
+  justify-content: center;
+  padding: 30px;
+  background: #f8f9fb;
+  min-height: 100vh;
+}
+
+.attendance-card {
+  background: white;
+  width: 90%;
+  max-width: 800px;
+  padding: 25px;
+  border-radius: 15px;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+}
+
+.attendance-card h1 {
+  margin-bottom: 15px;
+  color: #333;
+}
+
+.teacher-info {
+  font-size: 14px;
+  margin-bottom: 10px;
+  color: #555;
+}
+
+.row {
+  margin: 15px 0;
+}
+
+.row label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.row select {
+  width: 100%;
+  padding: 8px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+
+.attendance-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+.attendance-table th,
+.attendance-table td {
+  border: 1px solid #ddd;
+  padding: 10px;
+  text-align: left;
+}
+
+.attendance-table th {
+  background: #f1f1f1;
+}
+
+.attendance-table select {
+  padding: 5px;
+  border-radius: 6px;
+  border: 1px solid #aaa;
+}
+
+.save-btn {
+  margin-top: 20px;
+  background: #007bff;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.save-btn:hover {
+  background: #0056b3;
+}
+.attendance-container {
+  max-width: 700px;
+  margin: 40px auto;
+  padding: 20px;
+  background: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.attendance-container h2 {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.select-class {
+  margin-bottom: 20px;
+}
+
+.select-class label {
+  font-weight: bold;
+  margin-right: 10px;
+}
+
+.select-class select {
+  padding: 8px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+.attendance-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+}
+
+.attendance-table th,
+.attendance-table td {
+  border: 1px solid #ddd;
+  padding: 10px;
+  text-align: center;
+}
+
+.attendance-table th {
+  background-color: #f4f4f4;
+  color: #333;
+}
+
+.submit-btn {
+  display: block;
+  width: 100%;
+  padding: 12px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  font-weight: bold;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.submit-btn:hover {
+  background-color: #45a049;
+}

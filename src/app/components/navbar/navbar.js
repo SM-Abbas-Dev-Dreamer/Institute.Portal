@@ -2,7 +2,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { onAuthStateChanged } from "firebase/auth";
-import { auth, db } from "../../../../firebaseconfig.js";
+import { auth, db } from "../../../../firebaseconfig";
 import { doc, getDoc } from "firebase/firestore";
 import "./navbar.css";
 
@@ -26,12 +26,12 @@ const Navbar = () => {
   const navLinks = {
     admin: [
       { name: "Time Table", path: "/timetable" },
-      { name: "Create Class", path: "/create-class" },
-      { name: "Create User", path: "/create-user" },
+      { name: "Create Class", path: "/createclass" },
+      { name: "Create User", path: "/signup" },
     ],
     teacher: [
-      { name: "Attendance", path: "/attendance" },
-      { name: "Assignments", path: "/assignments" },
+      { name: "Attendance", path: "/attandance" },
+      { name: "Assignments", path: "/uploadassigment" },
     ],
     student: [
       { name: "Result", path: "/result" },
