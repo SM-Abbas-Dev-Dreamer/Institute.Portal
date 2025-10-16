@@ -1,7 +1,14 @@
 "use client";
 import { useState, useEffect } from "react";
 import { db, auth } from "../../../firebaseconfig";
-import { collection, addDoc, query, where, onSnapshot } from "firebase/firestore";
+import {
+  collection,
+  addDoc,
+  query,
+  where,
+  onSnapshot,
+  getDocs,
+} from "firebase/firestore";
 import { onAuthStateChanged } from "firebase/auth";
 import "./AssignmentPage.css";
 
@@ -14,21 +21,45 @@ export default function AssignmentPage() {
   const [totalMarks, setTotalMarks] = useState("");
   const [deadline, setDeadline] = useState("");
   const [assignments, setAssignments] = useState([]);
+  const [allClasses, setAllClasses] = useState([]);
 
   // 🔹 Get logged in teacher info
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, (user) => {
       if (user) {
-        setTeacher({ name: user.displayName || "Unknown", email: user.email });
+        setTeacher({
+          name: user.displayName || "Unknown",
+          email: user.email,
+        });
       }
     });
     return () => unsub();
   }, []);
 
-  // 🔹 Fetch teacher's own assignments from Firestore
+  // 🔹 Fetch All Classes from Firestore
+  useEffect(() => {
+    const fetchClasses = async () => {
+      try {
+        const querySnapshot = await getDocs(collection(db, "classes"));
+        const classesData = querySnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+        setAllClasses(classesData);
+      } catch (err) {
+        console.error("Error fetching classes:", err);
+      }
+    };
+    fetchClasses();
+  }, []);
+
+  // 🔹 Fetch teacher's assignments from Firestore
   useEffect(() => {
     if (!teacher) return;
-    const q = query(collection(db, "assignments"), where("teacherEmail", "==", teacher.email));
+    const q = query(
+      collection(db, "assignments"),
+      where("teacherEmail", "==", teacher.email)
+    );
     const unsubscribe = onSnapshot(q, (snapshot) => {
       const data = snapshot.docs.map((doc) => ({
         id: doc.id,
@@ -59,7 +90,7 @@ export default function AssignmentPage() {
         teacherEmail: teacher.email,
         createdAt: new Date().toISOString(),
       });
-      alert("Assignment created successfully!");
+      alert("✅ Assignment created successfully!");
       setTitle("");
       setDescription("");
       setRules("");
@@ -68,11 +99,11 @@ export default function AssignmentPage() {
       setDeadline("");
     } catch (err) {
       console.error("Error adding assignment:", err);
-      alert("Failed to save assignment");
+      alert("❌ Failed to save assignment");
     }
   };
 
-  // 🔹 Calculate countdown (hours, minutes, seconds)
+  // 🔹 Countdown Timer
   const getCountdown = (deadline) => {
     const now = new Date().getTime();
     const end = new Date(deadline).getTime();
@@ -85,7 +116,6 @@ export default function AssignmentPage() {
     return `${hours}h ${minutes}m ${seconds}s`;
   };
 
-  // 🔹 Update countdown every second
   const [updateTrigger, setUpdateTrigger] = useState(0);
   useEffect(() => {
     const interval = setInterval(() => setUpdateTrigger((t) => t + 1), 1000);
@@ -128,16 +158,18 @@ export default function AssignmentPage() {
             required
           />
 
+          {/* 🔹 Dropdown for Classes from Firestore */}
           <select
             value={className}
             onChange={(e) => setClassName(e.target.value)}
             required
           >
             <option value="">Select Class</option>
-            <option value="Class 9">Class 9</option>
-            <option value="Class 10">Class 10</option>
-            <option value="Class 11">Class 11</option>
-            <option value="Class 12">Class 12</option>
+            {allClasses.map((cls) => (
+              <option key={cls.id} value={cls.className}>
+                {cls.className}
+              </option>
+            ))}
           </select>
 
           <div className="date-section">

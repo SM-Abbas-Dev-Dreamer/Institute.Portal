@@ -36,7 +36,7 @@ const Navbar = () => {
     student: [
       { name: "Result", path: "/result" },
       { name: "Fee", path: "/fee" },
-      { name: "Assignments", path: "/assignments" },
+      { name: "Assignments", path: "/assigment" },
       { name: "Attendance", path: "/attendance" },
       { name: "Application", path: "/application" },
     ],

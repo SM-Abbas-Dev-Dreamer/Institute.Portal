@@ -1,45 +1,63 @@
 "use client";
-
 import React, { useEffect, useState } from "react";
 import { db, auth } from "../../../firebaseconfig";
-import { collection, getDocs, query, where, addDoc } from "firebase/firestore";
-import "./attend.css"; // agar CSS external file me hai
+import {
+  collection,
+  getDocs,
+  query,
+  where,
+  addDoc,
+  orderBy,
+} from "firebase/firestore";
+import "./attend.css";
 
-function AttendancePage() {
+export default function AttendancePage() {
+  const [teacher, setTeacher] = useState(null);
   const [assignedClasses, setAssignedClasses] = useState([]);
   const [selectedClass, setSelectedClass] = useState("");
   const [students, setStudents] = useState([]);
   const [attendance, setAttendance] = useState({});
-  const [teacher, setTeacher] = useState(null);
+  const [recentAttendance, setRecentAttendance] = useState([]);
 
+  // 🔹 Get logged-in teacher and assigned classes
   useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged((user) => {
+    const unsubscribe = auth.onAuthStateChanged(async (user) => {
       if (user) {
         setTeacher(user);
-        fetchAssignedClasses(user.uid);
+
+        // fetch teacher document
+        const qTeacher = query(collection(db, "users"), where("email", "==", user.email));
+        const teacherSnap = await getDocs(qTeacher);
+        if (!teacherSnap.empty) {
+          const teacherData = teacherSnap.docs[0].data();
+          setAssignedClasses(teacherData.classes || []);
+        }
+
+        // fetch recent attendance for this teacher
+        fetchRecentAttendance(user.email);
       }
     });
     return () => unsubscribe();
   }, []);
 
-  const fetchAssignedClasses = async (teacherId) => {
-    const q = query(collection(db, "timetable"), where("teacherId", "==", teacherId));
-    const querySnapshot = await getDocs(q);
-    const data = querySnapshot.docs.map((doc) => ({
-      id: doc.id,
-      ...doc.data(),
-    }));
-    setAssignedClasses(data);
-  };
-
   const fetchStudents = async (className) => {
-    const q = query(collection(db, "students"), where("className", "==", className));
+    setSelectedClass(className);
+    setStudents([]);
+    if (!className) return;
+
+    const q = query(
+      collection(db, "users"),
+      where("role", "==", "student"),
+      where("className", "==", className)
+    );
     const querySnapshot = await getDocs(q);
-    const data = querySnapshot.docs.map((doc) => ({
-      id: doc.id,
-      ...doc.data(),
-    }));
+    const data = querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
     setStudents(data);
+
+    // reset attendance
+    const initialAttendance = {};
+    data.forEach((s) => (initialAttendance[s.id] = ""));
+    setAttendance(initialAttendance);
   };
 
   const handleAttendanceChange = (studentId, status) => {
@@ -48,16 +66,34 @@ function AttendancePage() {
 
   const handleSubmit = async () => {
     if (!selectedClass) return alert("Select a class first!");
+    if (!teacher) return alert("Teacher not detected!");
+
+    const today = new Date().toISOString().split("T")[0]; // yyyy-mm-dd
 
     await addDoc(collection(db, "attendance"), {
       className: selectedClass,
       teacherName: teacher.displayName || "Unknown",
       teacherEmail: teacher.email,
-      date: new Date().toLocaleString(),
+      date: today,
       records: attendance,
     });
 
     alert("Attendance Submitted Successfully!");
+    setStudents([]);
+    setSelectedClass("");
+    setAttendance({});
+    fetchRecentAttendance(teacher.email);
+  };
+
+  const fetchRecentAttendance = async (teacherEmail) => {
+    const q = query(
+      collection(db, "attendance"),
+      where("teacherEmail", "==", teacherEmail),
+      orderBy("date", "desc")
+    );
+    const querySnapshot = await getDocs(q);
+    const data = querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+    setRecentAttendance(data);
   };
 
   return (
@@ -68,15 +104,12 @@ function AttendancePage() {
         <label>Select Class:</label>
         <select
           value={selectedClass}
-          onChange={(e) => {
-            setSelectedClass(e.target.value);
-            fetchStudents(e.target.value);
-          }}
+          onChange={(e) => fetchStudents(e.target.value)}
         >
           <option value="">-- Select --</option>
-          {assignedClasses.map((cls) => (
-            <option key={cls.id} value={cls.className}>
-              {cls.className} ({cls.subject})
+          {assignedClasses.map((cls, idx) => (
+            <option key={idx} value={cls}>
+              {cls}
             </option>
           ))}
         </select>
@@ -95,17 +128,16 @@ function AttendancePage() {
             {students.map((s) => (
               <tr key={s.id}>
                 <td>{s.name}</td>
-                <td>{s.rollNo}</td>
+                <td>{s.rollNumber}</td>
                 <td>
                   <select
-                    onChange={(e) =>
-                      handleAttendanceChange(s.id, e.target.value)
-                    }
+                    value={attendance[s.id]}
+                    onChange={(e) => handleAttendanceChange(s.id, e.target.value)}
                   >
-                    <option value="">--Select--</option>
-                    <option value="Present">Present</option>
-                    <option value="Absent">Absent</option>
-                    <option value="Leave">Leave</option>
+                    <option value="">--</option>
+                    <option value="P">P</option>
+                    <option value="A">A</option>
+                    <option value="L">L</option>
                   </select>
                 </td>
               </tr>
@@ -119,8 +151,36 @@ function AttendancePage() {
           Submit Attendance
         </button>
       )}
+
+      {recentAttendance.length > 0 && (
+        <div className="recent-attendance">
+          <h3>Recent Attendance</h3>
+          <table className="attendance-table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Class</th>
+                <th>Records</th>
+              </tr>
+            </thead>
+            <tbody>
+              {recentAttendance.map((rec) => (
+                <tr key={rec.id}>
+                  <td>{rec.date}</td>
+                  <td>{rec.className}</td>
+                  <td>
+                    {Object.entries(rec.records).map(([studentId, status]) => (
+                      <span key={studentId}>
+                        {students.find((s) => s.id === studentId)?.name || studentId}: {status}{" "}
+                      </span>
+                    ))}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
     </div>
   );
 }
-
-export default AttendancePage;

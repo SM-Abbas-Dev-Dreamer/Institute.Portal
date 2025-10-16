@@ -74,58 +74,66 @@ export default function CreateClassPage() {
   };
 
   return (
-    <div className="create-class-page">
-      <div className="form-container">
-        <h1>🏫 {editMode ? "Edit Class" : "Create New Class"}</h1>
+    <>
+      <h1 className="createclass">
+        {" "}
+        {editMode ? "Edit Class" : "Create New Class"}
+      </h1>
+      <div className="create-class-page">
+        <div className="form-container">
+          <form onSubmit={handleSubmit}>
+            <input
+              type="text"
+              placeholder="Enter class name e.g. BSCS-1st Semester"
+              value={className}
+              onChange={(e) => setClassName(e.target.value)}
+            />
 
-        <form onSubmit={handleSubmit}>
-          <input
-            type="text"
-            placeholder="Enter class name e.g. BSCS-1st Semester"
-            value={className}
-            onChange={(e) => setClassName(e.target.value)}
-          />
+            <button type="submit">
+              {editMode ? "Update Class" : "Add Class"}
+            </button>
+          </form>
+        </div>
 
-          <button type="submit">
-            {editMode ? "Update Class" : "Add Class"}
-          </button>
-        </form>
-      </div>
-
-      {/* 🔹 List of Classes */}
-      <div className="class-list">
-        <h2>📚 All Created Classes</h2>
-        {classes.length === 0 ? (
-          <p>No classes created yet.</p>
-        ) : (
-          <table>
-            <thead>
-              <tr>
-                <th>Class Name</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {classes.map((cls) => (
-                <tr key={cls.id}>
-                  <td>{cls.className}</td>
-                  <td>
-                    <button className="edit-btn" onClick={() => handleEdit(cls)}>
-                      Edit
-                    </button>
-                    <button
-                      className="delete-btn"
-                      onClick={() => handleDelete(cls.id)}
-                    >
-                      Delete
-                    </button>
-                  </td>
+        {/* 🔹 List of Classes */}
+        <div className="class-list">
+          <h2> All Created Classes</h2>
+          {classes.length === 0 ? (
+            <p>No classes created yet.</p>
+          ) : (
+            <table>
+              <thead>
+                <tr>
+                  <th>Class Name</th>
+                  <th>Actions</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
+              </thead>
+              <tbody>
+                {classes.map((cls) => (
+                  <tr key={cls.id}>
+                    <td>{cls.className}</td>
+                    <td>
+                      <div className="edit-btn">
+                        <button
+                          onClick={() => handleEdit(cls)}
+                        >
+                          <i className="fa-solid fa-pencil"></i>
+                        </button>
+                        <button
+                          className="delete-btn"
+                          onClick={() => handleDelete(cls.id)}
+                        >
+                          <i className="fa-solid fa-trash"></i>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
+        </div>
       </div>
-    </div>
+    </>
   );
 }

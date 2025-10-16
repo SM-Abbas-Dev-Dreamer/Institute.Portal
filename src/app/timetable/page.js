@@ -11,6 +11,7 @@ import {
   doc,
   updateDoc,
   deleteDoc,
+  arrayUnion,
 } from "firebase/firestore";
 import { onAuthStateChanged } from "firebase/auth";
 import "./AdminTimetable.css";
@@ -24,14 +25,15 @@ export default function AdminTimetablePage() {
   const [teacherEmail, setTeacherEmail] = useState("");
   const [teachers, setTeachers] = useState([]);
   const [timetables, setTimetables] = useState([]);
-  const [classes, setClasses] = useState([]); // <-- NEW: all class names
+  const [classes, setClasses] = useState([]);
   const [admin, setAdmin] = useState(null);
   const [editId, setEditId] = useState(null);
 
   // check logged in admin
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, (user) => {
-      if (user) setAdmin({ name: user.displayName || "Admin", email: user.email });
+      if (user)
+        setAdmin({ name: user.displayName || "Admin", email: user.email });
       else setAdmin(null);
     });
     return () => unsub();
@@ -89,11 +91,13 @@ export default function AdminTimetablePage() {
     setEditId(null);
   };
 
+  // create new timetable entry
   const handleCreate = async (e) => {
     e.preventDefault();
     if (!isValidForm()) return;
 
     try {
+      // add timetable
       await addDoc(collection(db, "timetables"), {
         day,
         subject,
@@ -105,6 +109,16 @@ export default function AdminTimetablePage() {
         createdBy: admin?.email || null,
         createdAt: new Date().toISOString(),
       });
+
+      // update teacher's classes array
+      const teacherDoc = teachers.find((t) => t.email === teacherEmail);
+      if (teacherDoc) {
+        const teacherRef = doc(db, "users", teacherDoc.id);
+        await updateDoc(teacherRef, {
+          classes: arrayUnion(subject),
+        });
+      }
+
       resetForm();
     } catch (err) {
       console.error("create timetable error:", err);
@@ -112,6 +126,7 @@ export default function AdminTimetablePage() {
     }
   };
 
+  // prepare edit
   const startEdit = (entry) => {
     setEditId(entry.id);
     setDay(entry.day || "");
@@ -123,6 +138,7 @@ export default function AdminTimetablePage() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
+  // update entry
   const handleUpdate = async (e) => {
     e.preventDefault();
     if (!isValidForm() || !editId) return;
@@ -140,6 +156,16 @@ export default function AdminTimetablePage() {
         updatedBy: admin?.email || null,
         updatedAt: new Date().toISOString(),
       });
+
+      // update teacher's classes array
+      const teacherDoc = teachers.find((t) => t.email === teacherEmail);
+      if (teacherDoc) {
+        const teacherRef = doc(db, "users", teacherDoc.id);
+        await updateDoc(teacherRef, {
+          classes: arrayUnion(subject),
+        });
+      }
+
       resetForm();
     } catch (err) {
       console.error("update error:", err);
@@ -147,10 +173,13 @@ export default function AdminTimetablePage() {
     }
   };
 
+  // delete entry
   const handleDelete = async (id) => {
-    if (!confirm("Kya aap sach mein is entry ko delete karna chahte hain?")) return;
+    if (!confirm("Kya aap sach mein is entry ko delete karna chahte hain?"))
+      return;
     try {
       await deleteDoc(doc(db, "timetables", id));
+      // note: teacher's array remove not included (optional)
     } catch (err) {
       console.error("delete error:", err);
       alert("Delete failed.");
@@ -160,11 +189,15 @@ export default function AdminTimetablePage() {
   return (
     <div className="admin-timetable-page">
       <div className="form-card">
-        <h1>📚 Admin — Set Class Timetable</h1>
+        <h1> Admin — Set Class Timetable</h1>
         <form onSubmit={editId ? handleUpdate : handleCreate} className="tform">
           <div className="row">
             <label>Day</label>
-            <select value={day} onChange={(e) => setDay(e.target.value)} required>
+            <select
+              value={day}
+              onChange={(e) => setDay(e.target.value)}
+              required
+            >
               <option value="">Select Day</option>
               <option>Monday</option>
               <option>Tuesday</option>
@@ -242,15 +275,15 @@ export default function AdminTimetablePage() {
             <button type="submit" className="primary">
               {editId ? "Update Entry" : "Create Entry"}
             </button>
-            <button type="button" className="muted" onClick={resetForm}>
+            {/* <button type="button" className="muted" onClick={resetForm}>
               Reset
-            </button>
+            </button> */}
           </div>
         </form>
       </div>
 
       <div className="list-card">
-        <h2>🗓 Current Timetable Entries</h2>
+        <h2> Current Timetable Entries</h2>
         {timetables.length === 0 ? (
           <p>No timetable entries yet.</p>
         ) : (
@@ -269,13 +302,27 @@ export default function AdminTimetablePage() {
               {timetables.map((entry) => (
                 <tr key={entry.id}>
                   <td>{entry.day}</td>
-                  <td>{entry.startTime} - {entry.endTime}</td>
+                  <td>
+                    {entry.startTime} - {entry.endTime}
+                  </td>
                   <td>{entry.subject}</td>
                   <td>{entry.room || "—"}</td>
                   <td>{entry.teacherName || entry.teacherEmail}</td>
-                  <td>
-                    <button className="small" onClick={() => startEdit(entry)}>Edit</button>
-                    <button className="small danger" onClick={() => handleDelete(entry.id)}>Delete</button>
+                  <td className="">
+                    <div className="table-btn">
+                      <button
+                        className="small"
+                        onClick={() => startEdit(entry)}
+                      >
+                        <i className="fa-solid fa-pen"></i>
+                      </button>
+                      <button
+                        className="small danger"
+                        onClick={() => handleDelete(entry.id)}
+                      >
+                        <i className="fa-solid fa-trash"></i>
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))}

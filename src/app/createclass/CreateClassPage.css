@@ -1,126 +1,100 @@
 .create-class-page {
-  background: #f3f4f6;
-  min-height: 100vh;
-  padding: 40px;
+  width: 100%;
   display: flex;
-  flex-direction: column;
+}
+h1.createclass {
+  font-size: 35px;
+  font-weight: 600;
+  text-align: center;
+}
+.create-class-page .form-container {
+  display: flex;
+  width: 45%;
+  /* height: 200px; */
+  display: flex;
+  justify-content: center;
   align-items: center;
-  gap: 40px;
 }
-
-/* 🔹 Form Section */
-.form-container {
-  background: #fff;
-  padding: 30px;
-  border-radius: 12px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  width: 100%;
-  max-width: 500px;
+.create-class-page .form-container form {
+  height: 45px;
+  margin: 30px 0;
 }
-
-.form-container h1 {
-  text-align: center;
-  color: #1d4ed8;
-  margin-bottom: 20px;
-  font-size: 24px;
-}
-
-.form-container form {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-}
-
-.form-container input {
-  padding: 12px;
-  font-size: 16px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  outline: none;
-  transition: border-color 0.3s;
-}
-
-.form-container input:focus {
-  border-color: #2563eb;
-}
-
-.form-container button {
-  background: #2563eb;
-  color: white;
-  border: none;
-  padding: 12px;
-  font-size: 16px;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: background 0.3s;
-}
-
-.form-container button:hover {
-  background: #1e3a8a;
-}
-
-/* 🔹 Class List Section */
-.class-list {
-  background: white;
-  width: 100%;
-  max-width: 600px;
-  padding: 20px;
-  border-radius: 12px;
-  box-shadow: 0px 3px 10px rgba(0, 0, 0, 0.1);
-}
-
-.class-list h2 {
-  text-align: center;
-  color: #1e40af;
-  margin-bottom: 15px;
-}
-
-.class-list table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-.class-list th,
-.class-list td {
-  border: 1px solid #ccc;
+.create-class-page .form-container form input {
+  background: #eee;
   padding: 10px 15px;
-  text-align: center;
+  font-size: 16px;
+  outline: none;
+  border-radius: 20px 0px 0 20px;
 }
-
-.class-list th {
-  background-color: #1e40af;
-  color: white;
-}
-
-.class-list tr:nth-child(even) {
-  background: #f9fafb;
-}
-
-.edit-btn,
-.delete-btn {
-  border: none;
-  padding: 6px 12px;
-  border-radius: 6px;
-  cursor: pointer;
-  font-weight: bold;
+.create-class-page .form-container form input::placeholder {
   font-size: 14px;
-  margin: 0 4px;
 }
-
-.edit-btn {
-  background-color: #2563eb;
-  color: white;
+.create-class-page .form-container form button {
+  width: 100px;
+  font-size: 16px;
+  height: 100%;
+  font-weight: 600;
+  border-radius: 0px 20px 20px 0;
+  background-color: #333;
+  color: #fff;
+  cursor: pointer;
 }
-
-.edit-btn:hover {
-  background-color: #1e3a8a;
+.create-class-page .class-list {
+  width: 45%;
+  margin: auto;
 }
-
-.delete-btn {
-  background-color: #dc2626;
-  color: white;
+.create-class-page .class-list h2 {
+  font-size: 25px;
+  margin: 20px 0;
 }
-
-.delete-btn:hover {
-  background-color: #991b1b;
+.create-class-page .class-list p {
+  font-size: 19px;
+}
+.create-class-page .class-list table {
+  width: 300px;
+  text-align: start;
+  border: 1px solid #000;
+  margin: auto;
+}
+.create-class-page .class-list table tbody td {
+  border: 1px solid #000;
+  padding: 5px;
+}
+.create-class-page .class-list table tbody td .edit-btn {
+  background: #333;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 5px 0px;
+  border-radius: 40px;
+  position: relative;
+}
+.create-class-page .class-list table tbody td .edit-btn::after {
+  position: absolute;
+  content: "";
+  width: 2px;
+  height: 100%;
+  background: #eee;
+  top: 0;
+  left: 50%;
+}
+.create-class-page .class-list table tbody td button {
+  padding: 3px;
+  cursor: pointer;
+  color: #eee;
+}
+@media (max-width: 692px) {
+  .create-class-page {
+    flex-direction: column;
+    width: 100%;
+  }
+  .create-class-page .form-container {
+    width: 100%;
+    margin: 20px 0;
+    margin: auto;
+  }
+  .create-class-page .class-list {
+    width: 100%;
+    margin: auto;
+  }
 }
