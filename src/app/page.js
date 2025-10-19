@@ -1,11 +1,11 @@
-import React from 'react'
-const Page = () => {
+import { ChartLineDefault } from "./components/line-Chart/page"
+import AdminDashboard from "@/components/mvpblocks"
 
+export default function HomePage() {
   return (
-    <>
-    
-    </>
+    <main className="">
+      {/* <ChartLineDefault /> */}
+      {/* <AdminDashboard/> */}
+    </main>
   )
 }
-
-export default Page

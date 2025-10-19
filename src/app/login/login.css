@@ -3,14 +3,25 @@
     width: 100%;
     height: 100vh;
     background: url("https://cdn.pixabay.com/photo/2019/05/29/00/43/johns-hopkins-university-4236470_1280.jpg")no-repeat center center/cover;
+    backdrop-filter: blur(10px);
+    position: relative;
+}
+.login-sheet{
+    position: absolute;
+    content: "";
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    /* background: #55555579; */
+    backdrop-filter: blur(10px);
 }
 .login{
     width: 350px;
     max-width: 600px;
     min-width: 300px;
     position: absolute;
-    background: #00000046;
-    backdrop-filter: blur(10px);
+    background: #000000be;
     top: 50%;
     left: 50%;
     transform: translate(-50%,-50%);
@@ -22,7 +33,7 @@
     font-size: 35px;
     font-weight: 700;
     text-align: center;
-    color: #fff;
+    color: #ddd;
 }
 .login form{
     display: flex;
@@ -30,20 +41,26 @@
     flex-direction: column;
 }
 .login form .input-box{
-    border: 1px solid #ccc;
+    border: 1px solid #99999973;
+    border-radius: 30px;
     margin: 20px 0;
     width: 100%;
     padding: 5px 10px ;
 }
 .login form .input-box i{
     transition: 0.3s;
+    pointer-events: none;
+    color: #777;
 }
 .login form .input-box label{
     position: absolute;
     left: 20%;
     transition: 0.3s;
     user-select: auto;
+    pointer-events: none;
+    color: #777;
 }
+
 
 .login form .input-box input{
     width: 90%;
@@ -52,7 +69,7 @@
     background: transparent;
     border: none;
     outline: none;
-    color: #fff;
+    color: #777;
 }
 .login form .input-box input:focus ~ label,
 .login form .input-box input:valid ~ label{
@@ -64,19 +81,39 @@
     color: #fff;
 }
 .login form select{
-    border: 1px solid #ccc;
+    border: 1px solid #99999962;
     background: transparent;
     outline: none;
     cursor: pointer;
+    color: #555;
+    padding: 5px 0;
+    border-radius: 30px;
 }
-
+/* .login form .login-select option{
+    background: #000000be;
+    color: #ddd;
+    border-radius: 30px;
+    padding-left: 20px;
+} */
+.role-select-trigger{
+    box-shadow: 0 0  0 #fff;
+    width: 300px;
+    padding: 0 30px;
+    text-align: center;
+}
+.role-select-content{
+    background: transparent;
+    background: #000000dc;
+    color: #999;
+}
 .login form button{
-    border: 1px solid #ccc;
+    border: 1px solid #cccccc83;
     margin: 10px 0;
     padding: 5px 0;
     float: right;
     cursor: pointer;
     width: 100px;
+    color: #999;
     transition: 0.3s;
 }
 .login-bottom{
@@ -86,13 +123,13 @@
 }
 .login-bottom a{
     transition: 0.3s;
+    color: #999;
 }
 .login-bottom a:hover{
     color: #fff;
     
 }
 .login form button:hover{
-    border:  1px solid rgb(9, 83, 221);
     color: #fff;
 }
 

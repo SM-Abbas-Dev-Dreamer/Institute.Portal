@@ -1,0 +1,36 @@
+.table-header{
+  padding-top: 50px;
+  width: min(600px,100%);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: auto;
+}
+@media(max-width:400px){
+  .table-header{
+    flex-direction: column;
+  }
+}
+.table-header .create-class-btn{
+  background: #333;
+  padding: 20px 20px;
+  font-size: 14px;
+  color: #ddd;
+  cursor: pointer;
+}
+.select-class-btn {
+}
+.form-dialog{
+  
+}
+.form-dialog .form-dialog-header{
+
+}
+.form-dialog .form-dialog-card{
+  box-shadow: none;
+  border: none;
+}
+.form-title{
+  font-size: 25px;
+  text-align: center;
+}

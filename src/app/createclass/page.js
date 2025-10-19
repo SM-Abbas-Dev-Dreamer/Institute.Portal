@@ -1,5 +1,6 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
+import { useForm, useFieldArray } from "react-hook-form";
 import { db } from "../../../firebaseconfig";
 import {
   collection,
@@ -9,15 +10,53 @@ import {
   doc,
   updateDoc,
 } from "firebase/firestore";
+
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+
+import {
+  Select,
+  SelectTrigger,
+  SelectContent,
+  SelectItem,
+  SelectValue,
+} from "@/components/ui/select";
+
+import { Button } from "@/components/ui/button";
 import "./CreateClassPage.css";
 
 export default function CreateClassPage() {
-  const [className, setClassName] = useState("");
   const [classes, setClasses] = useState([]);
   const [editMode, setEditMode] = useState(false);
   const [editId, setEditId] = useState(null);
+  const [visibleColumns, setVisibleColumns] = useState([
+    "className",
+    "subjects",
+    "actions",
+  ]);
 
-  // 🔹 Real-time fetch classes
+  // ✅ React Hook Form setup
+  const { register, handleSubmit, control, reset, setValue } = useForm({
+    defaultValues: {
+      className: "",
+      subjectInput: "",
+      subjects: [],
+    },
+  });
+
+  // ✅ Subjects array (Todo style)
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: "subjects",
+  });
+
+  // 🔹 Real-time Firestore fetch
   useEffect(() => {
     const unsub = onSnapshot(collection(db, "classes"), (snapshot) => {
       const data = snapshot.docs.map((doc) => ({
@@ -29,43 +68,61 @@ export default function CreateClassPage() {
     return () => unsub();
   }, []);
 
-  // 🔹 Add / Update class
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!className.trim()) return alert("Please enter a class name");
+  // 🔹 Add subject todo-style
+  const handleAddSubject = (subjectInput) => {
+    const trimmed = subjectInput.trim();
+    if (!trimmed) return alert("Please enter a subject");
+    const existing = fields.map((f) => f.name.toLowerCase());
+    if (existing.includes(trimmed.toLowerCase())) {
+      alert("Subject already added!");
+      return;
+    }
+    append({ name: trimmed });
+    setValue("subjectInput", "");
+  };
+
+  // 🔹 Submit handler
+  const onSubmit = async (data) => {
+    const className = data.className.trim();
+    const subjects = data.subjects.map((s) => s.name);
+
+    if (!className) return alert("Please enter a class name");
 
     try {
       if (editMode) {
-        // 🔹 Update existing class
         const ref = doc(db, "classes", editId);
-        await updateDoc(ref, { className: className.trim() });
+        await updateDoc(ref, { className, subjects });
         alert("Class updated successfully!");
         setEditMode(false);
         setEditId(null);
       } else {
-        // 🔹 Add new class
         await addDoc(collection(db, "classes"), {
-          className: className.trim(),
+          className,
+          subjects,
           createdAt: new Date().toISOString(),
         });
         alert("Class created successfully!");
       }
 
-      setClassName("");
+      reset({ className: "", subjectInput: "", subjects: [] });
     } catch (error) {
       console.error("Error:", error);
       alert("Something went wrong");
     }
   };
 
-  // 🔹 Edit class
+  // 🔹 Edit
   const handleEdit = (cls) => {
     setEditMode(true);
     setEditId(cls.id);
-    setClassName(cls.className);
+    reset({
+      className: cls.className,
+      subjectInput: "",
+      subjects: cls.subjects?.map((name) => ({ name })) || [],
+    });
   };
 
-  // 🔹 Delete class
+  // 🔹 Delete
   const handleDelete = async (id) => {
     if (window.confirm("Are you sure you want to delete this class?")) {
       await deleteDoc(doc(db, "classes", id));
@@ -73,64 +130,145 @@ export default function CreateClassPage() {
     }
   };
 
+  // 🔹 Column toggle
+  const handleColumnToggle = (value) => {
+    setVisibleColumns((prev) =>
+      prev.includes(value) ? prev.filter((c) => c !== value) : [...prev, value]
+    );
+  };
+
   return (
     <>
       <h1 className="createclass">
-        {" "}
         {editMode ? "Edit Class" : "Create New Class"}
       </h1>
+
       <div className="create-class-page">
         <div className="form-container">
-          <form onSubmit={handleSubmit}>
-            <input
-              type="text"
-              placeholder="Enter class name e.g. BSCS-1st Semester"
-              value={className}
-              onChange={(e) => setClassName(e.target.value)}
-            />
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <div className="class-input-section">
+              {/* 🔹 Class Name Input */}
+              <div className="input-box">
+                <input type="text" {...register("className")} required />
+                <label>
+                  {editMode ? "Edit Class Name" : "Enter Class Name"}
+                </label>
+              </div>
+              <Button type="submit" className="w-full mt-3">
+                {editMode ? "Update Class" : "Add Class"}
+              </Button>
+            </div>
 
-            <button type="submit">
-              {editMode ? "Update Class" : "Add Class"}
-            </button>
+            {/* 🔹 Subject Input (Todo style) */}
+            <div className="subject-section">
+              <div className="subject input-box">
+                <input
+                  type="text"
+                  {...register("subjectInput")}
+                  placeholder="Enter Subject"
+                />
+              </div>
+              <Button
+                type="button"
+                onClick={() =>
+                  handleAddSubject(
+                    document.querySelector("[name='subjectInput']").value
+                  )
+                }
+              >
+                Add Subject
+              </Button>
+
+              {/* 🔹 Show Added Subjects */}
+              {fields.length > 0 && (
+                  <ul className="subject-list">
+                    {fields.map((item, index) => (
+                      <li key={item.id}>
+                        {item.name}
+                        <button
+                          type="button"
+                          className="remove-btn"
+                          onClick={() => remove(index)}
+                        >
+                          <i className="fa-solid fa-xmark"></i>
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+              )}
+            </div>
           </form>
         </div>
 
-        {/* 🔹 List of Classes */}
-        <div className="class-list">
-          <h2> All Created Classes</h2>
+        {/* 🔹 Column Toggle Select */}
+        <div className="column-toggle mt-5 ">
+          <Select onValueChange={handleColumnToggle}>
+            <SelectTrigger className="w-[200px] filter">
+              <SelectValue placeholder="Select Column" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="className">Class Name</SelectItem>
+              <SelectItem value="subjects">Subjects</SelectItem>
+              <SelectItem value="actions">Actions</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+
+        {/* 🔹 Table */}
+        <div className="class-list mt-4">
+          <h2></h2>
           {classes.length === 0 ? (
             <p>No classes created yet.</p>
           ) : (
-            <table>
-              <thead>
-                <tr>
-                  <th>Class Name</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
+            <Table className="mt-3 border rounded-lg">
+              <TableHeader>
+                <TableRow>
+                  {visibleColumns.includes("className") && (
+                    <TableHead>Class Name</TableHead>
+                  )}
+                  {visibleColumns.includes("subjects") && (
+                    <TableHead>Subjects</TableHead>
+                  )}
+                  {visibleColumns.includes("actions") && (
+                    <TableHead>Actions</TableHead>
+                  )}
+                </TableRow>
+              </TableHeader>
+              <TableBody>
                 {classes.map((cls) => (
-                  <tr key={cls.id}>
-                    <td>{cls.className}</td>
-                    <td>
-                      <div className="edit-btn">
-                        <button
-                          onClick={() => handleEdit(cls)}
-                        >
-                          <i className="fa-solid fa-pencil"></i>
-                        </button>
-                        <button
-                          className="delete-btn"
-                          onClick={() => handleDelete(cls.id)}
-                        >
-                          <i className="fa-solid fa-trash"></i>
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
+                  <TableRow key={cls.id}>
+                    {visibleColumns.includes("className") && (
+                      <TableCell>{cls.className}</TableCell>
+                    )}
+                    {visibleColumns.includes("subjects") && (
+                      <TableCell>
+                        {cls.subjects?.length
+                          ? cls.subjects.join(", ")
+                          : "No subjects added"}
+                      </TableCell>
+                    )}
+                    {visibleColumns.includes("actions") && (
+                      <TableCell>
+                        <div className="flex gap-2 class-edit-delete ">
+                          <Button
+                            variant="outline"
+                            onClick={() => handleEdit(cls)}
+                          >
+                            <i class="fa-solid fa-pencil"></i>
+                          </Button>
+                          <Button
+                            variant="destructive"
+                            onClick={() => handleDelete(cls.id)}
+                          >
+                            <i class="fa-solid fa-trash"></i>
+                          </Button>
+                        </div>
+                      </TableCell>
+                    )}
+                  </TableRow>
                 ))}
-              </tbody>
-            </table>
+              </TableBody>
+            </Table>
           )}
         </div>
       </div>

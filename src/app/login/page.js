@@ -6,6 +6,15 @@ import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth, db } from "../../../firebaseconfig";
 import { doc, getDoc } from "firebase/firestore";
 import { useRouter } from "next/navigation";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const LogIn = () => {
   const [email, setEmail] = useState("");
@@ -20,7 +29,11 @@ const LogIn = () => {
 
     try {
       // 🔹 Step 1: Sign in user with Firebase Auth
-      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const userCredential = await signInWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
       const user = userCredential.user;
 
       // 🔹 Step 2: Get user's role from Firestore
@@ -34,7 +47,7 @@ const LogIn = () => {
           // 🔹 Step 3: Redirect based on role
           // if (role === "admin") router.push("/admin");
           // else if (role === "teacher") router.push("/teacher");
-           router.push("/");
+          router.push("/");
         } else {
           setError("❌ Role mismatch! Please select your correct role.");
         }
@@ -49,6 +62,7 @@ const LogIn = () => {
 
   return (
     <div className="login-body">
+      <div className="login-sheet"></div>
       <div className="login">
         <h1>Log In</h1>
         <form onSubmit={handleSubmit}>
@@ -74,11 +88,26 @@ const LogIn = () => {
             <label>Password</label>
           </div>
 
-          <select value={role} onChange={(e) => setRole(e.target.value)}>
-            <option value="student">Student</option>
-            <option value="teacher">Teacher</option>
-            <option value="admin">Admin</option>
-          </select>
+          <Select value={role} onValueChange={(value) => setRole(value)}>
+            <SelectTrigger className="role-select-trigger w-[300px] ">
+              <SelectValue placeholder="Select Role w-[200px]   " />
+            </SelectTrigger>
+
+            <SelectContent className="role-select-content">
+              <SelectGroup>
+                <SelectLabel className="role-select-label">Roles</SelectLabel>
+                <SelectItem value="student" className="role-select-item">
+                  Student
+                </SelectItem>
+                <SelectItem value="teacher" className="role-select-item">
+                  Teacher
+                </SelectItem>
+                <SelectItem value="admin" className="role-select-item">
+                  Admin
+                </SelectItem>
+              </SelectGroup>
+            </SelectContent>
+          </Select>
 
           {error && <p style={{ color: "red" }}>{error}</p>}
 

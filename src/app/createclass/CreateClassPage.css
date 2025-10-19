@@ -1,100 +1,252 @@
+/* 🔹 General Page Styling */
 .create-class-page {
-  width: 100%;
+  min-height: 100vh;
+  font-family: "Inter", sans-serif;
+  color: #1f2937;
+  padding: 2rem;
   display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 h1.createclass {
   font-size: 35px;
   font-weight: 600;
   text-align: center;
+  margin-top: 100px;
 }
-.create-class-page .form-container {
+.create-class-page .form-container form h2 {
+  text-align: start;
+  color: #444;
+  font-size: 18px;
+}
+
+/* 🔹 Page Title */
+.createclass {
+  text-align: center;
+  font-size: 2rem;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 1.5rem;
+}
+.filter{
+  background: #242323;
+  color: #fff;
+  outline: none;
+  box-shadow: none;
+}
+/* 🔹 Form Section */
+.form-container {
+  background: #ffffff;
+  padding: 2rem;
+  border-radius: 1rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+  max-width: 600px;
+  width: 100%;
+  margin-bottom: 2rem;
+  transition: all 0.3s ease;
+}
+
+.form-container form {
   display: flex;
-  width: 45%;
-  /* height: 200px; */
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 2rem;
+}
+.form-container form div{
+  display: flex;
+  justify-content: space-between;
+  gap: 30px;
+}
+.form-container form div .input-box{
+  position: relative;
+  box-shadow: inset 2px 2px 3px #999,
+  2px 2px 3px #999;
+  border-radius: 20px;
+  width: calc(100% - 130px);
+}
+.form-container form div .input-box label{
+  position: absolute;
+  top: 50%;
+  left: 5%;
+  transform: translateY(-50%);
+  transition: 0.3s;
+  pointer-events: none;
+  outline: none;
+}
+.form-container form div input{
+  width: 100%;
+  padding: 0 10px;
+  outline: none;
+}
+.form-container form div button{
+  width: 100px;
+  float: right;
+  height: 100%;
+  cursor: pointer;
+}
+.form-container form div .input-box input:focus ~ label,
+.form-container form div .input-box input:valid ~ label{
+  transform: translateY(-35px);
+}
+.subject-section{
+  position: relative;
+}
+.subject-section ul{
+  position: absolute;
+  box-shadow: 2px 2px 5px #999;
+  backdrop-filter: blur(1px);
+  top: 60px;
+  display: flex;
+  flex-wrap: wrap;
+  margin: auto;
+  padding: 10px 30px;
+  gap: 30px;
+  border-radius: 20px;
+}
+.subject-section ul li{
+  /* background: #99999979; */
+  box-shadow:inset 2px 2px 5px #999,
+   2px 2px 5px #999;
+  width: 100px;
+  padding: 5px;
+  font-size: 11px;
+  display: flex;
+  justify-content: end;
+  align-items: center;
+  border-radius: 50px;
+  text-align: start;
+  margin: auto;
+}
+.subject-section ul li button{
+  background: #222;
+  height: 30px;
+  width: 30px;
+  margin-left: 20px;
+  border-radius: 50%;
+  cursor: pointer;
+}
+.subject-section ul li button i{
+  color: #fff;
+  font-size: 18px;
+}
+.class-edit-delete button{
+  cursor: pointer;
+}
+.form-container input {
+
+}
+
+.form-container .input-box {
+
+}
+.form-container .input-box input {
+}
+.form-container .input-box label {
+}
+.form-container .input-box input:focus ~ label,
+.form-container .input-box input:valid ~ label {
+}
+/* 🔹 Buttons */
+.form-container button {
+}
+
+.form-container button:hover {
+}
+
+/* 🔹 Class List Section */
+.class-list {
+  width: 100%;
+}
+
+.class-list h2 {
+  font-size: 30px;
+  font-weight: 600;
+  margin: 20px 0;
+  text-align: center;
+  
+}
+
+/* 🔹 Table Styling */
+.class-list table {
+  width: min(600px,100%);
+  margin: auto;
+  text-align: center;
+}
+
+/* .class-list th, */
+.class-list td {
+  margin: 3px 0;
+}
+.class-list tr{
+ margin: 10px 0;
+}
+.class-list tr:nth-child(even){
+  background: #99999944;
+  
+}
+.class-list th {
+  background: #444;
+  color: #fff;
+  font-size: 17px;
+  padding: 5px 10px;
+}
+
+.class-list td {
+  color: #333;
+}
+
+/* 🔹 Action Buttons */
+.edit-table-data{
   display: flex;
   justify-content: center;
   align-items: center;
 }
-.create-class-page .form-container form {
-  height: 45px;
-  margin: 30px 0;
-}
-.create-class-page .form-container form input {
-  background: #eee;
-  padding: 10px 15px;
-  font-size: 16px;
-  outline: none;
-  border-radius: 20px 0px 0 20px;
-}
-.create-class-page .form-container form input::placeholder {
-  font-size: 14px;
-}
-.create-class-page .form-container form button {
-  width: 100px;
-  font-size: 16px;
-  height: 100%;
-  font-weight: 600;
-  border-radius: 0px 20px 20px 0;
-  background-color: #333;
-  color: #fff;
-  cursor: pointer;
-}
-.create-class-page .class-list {
-  width: 45%;
-  margin: auto;
-}
-.create-class-page .class-list h2 {
-  font-size: 25px;
-  margin: 20px 0;
-}
-.create-class-page .class-list p {
-  font-size: 19px;
-}
-.create-class-page .class-list table {
-  width: 300px;
-  text-align: start;
-  border: 1px solid #000;
-  margin: auto;
-}
-.create-class-page .class-list table tbody td {
-  border: 1px solid #000;
-  padding: 5px;
-}
-.create-class-page .class-list table tbody td .edit-btn {
-  background: #333;
+.edit-btn {
   display: flex;
-  justify-content: space-around;
-  align-items: center;
-  padding: 5px 0px;
-  border-radius: 40px;
+  cursor: pointer;
+  justify-content: space-between;
+  gap: 30px;
+  background: #333;
+  padding: 5px 10px ;
+  border-radius: 50px;
   position: relative;
 }
-.create-class-page .class-list table tbody td .edit-btn::after {
+.edit-btn::after{
   position: absolute;
   content: "";
   width: 2px;
   height: 100%;
-  background: #eee;
+  background: #fff;
   top: 0;
   left: 50%;
 }
-.create-class-page .class-list table tbody td button {
-  padding: 3px;
+
+.edit-btn button {
+  color: #fff;
   cursor: pointer;
-  color: #eee;
 }
-@media (max-width: 692px) {
-  .create-class-page {
-    flex-direction: column;
-    width: 100%;
-  }
-  .create-class-page .form-container {
-    width: 100%;
-    margin: 20px 0;
-    margin: auto;
-  }
-  .create-class-page .class-list {
-    width: 100%;
-    margin: auto;
-  }
+
+.edit-btn button:hover {
+  color: #ccc;
 }
+.class-list tr:nth-child(even) .edit-btn{
+  background: none;
+  border: 1px solid #555;
+}
+.class-list tr:nth-child(even) .edit-btn::after{
+  background: #555;
+}
+.class-list tr:nth-child(even) .edit-btn button{
+  color: #444;
+}
+
+
+
+/* 🔹 No Data Message */
+.class-list p {
+  text-align: center;
+  color: #6b7280;
+  padding: 2rem 0;
+  font-size: 1rem;
+}
+

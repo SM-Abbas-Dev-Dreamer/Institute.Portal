@@ -1,0 +1,60 @@
+.timetable-table-container {
+  background: #ffffff;
+  border-radius: 16px;
+  border: 2px solid #bfdbfe;
+  padding: 1.5rem;
+  margin-top: 1.5rem;
+  box-shadow: 0 4px 10px rgba(37, 99, 235, 0.1);
+  overflow-x: auto;
+}
+
+.timetable-table-container h3 {
+  color: #cfcfcf;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+.styled-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+  text-align: center;
+}
+
+.styled-table th,
+.styled-table td {
+  border: 1px solid #dbeafe;
+  padding: 12px 10px;
+}
+
+.styled-table thead {
+  background-color: #555;
+  color: white;
+}
+
+.styled-table th {
+  font-weight: 600;
+}
+
+.styled-table tr:nth-child(even) {
+  background-color: #d6d8db;
+}
+
+.styled-table td {
+  transition: background-color 0.3s ease-in-out;
+}
+
+.styled-table td.bg-blue-100 {
+  background-color: #dbeafe !important;
+  color: #1e3a8a;
+  font-weight: 500;
+  white-space: pre-line;
+}
+
+.styled-table td.italic {
+  font-style: italic;
+  color: #9ca3af;
+}
+.day-table{
+  background: rgb(188, 185, 189);
+}
