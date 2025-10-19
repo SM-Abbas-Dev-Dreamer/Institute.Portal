@@ -2,7 +2,6 @@
 import { useEffect, useState } from "react";
 import { db } from "../../../../firebaseconfig";
 import { collection, onSnapshot } from "firebase/firestore";
-import "./selectclass.css"
 import {
   Select,
   SelectContent,
