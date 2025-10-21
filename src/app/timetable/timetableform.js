@@ -24,6 +24,18 @@ import {
 } from "@/components/ui/select";
 
 export default function TimetableForm({ teachers }) {
+  // 🧩 Toast system (Custom — No dependency)
+  const [toastMessage, setToastMessage] = useState("");
+  const [toastType, setToastType] = useState("info");
+  const [showToast, setShowToast] = useState(false);
+
+  const triggerToast = (msg, type = "info") => {
+    setToastMessage(msg);
+    setToastType(type);
+    setShowToast(true);
+    setTimeout(() => setShowToast(false), 3000);
+  };
+
   const [form, setForm] = useState({
     courseTitle: "",
     teacherId: "",
@@ -33,7 +45,6 @@ export default function TimetableForm({ teachers }) {
     classId: "",
   });
 
-  // 🕒 helper: convert "HH:MM" -> total minutes
   const toMinutes = (timeStr) => {
     if (!timeStr) return 0;
     const [hours, minutes] = timeStr.split(":").map(Number);
@@ -43,25 +54,27 @@ export default function TimetableForm({ teachers }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!form.classId) return alert("Please select a class first!");
-    if (!form.teacherId) return alert("Please select a teacher!");
+    if (!form.classId)
+      return triggerToast("Please select a class first!", "error");
+
+    if (!form.teacherId)
+      return triggerToast("Please select a teacher!", "error");
 
     try {
       const { classId, teacherId, day, startTime, endTime, courseTitle } = form;
       const startMin = toMinutes(startTime);
       const endMin = toMinutes(endTime);
 
-      if (endMin <= startMin) {
-        return alert("End time must be greater than start time.");
-      }
+      if (endMin <= startMin)
+        return triggerToast("End time must be greater than start time.", "error");
 
-      // 🔹 Step 1: get className from database
+      // 🔹 Step 1: Get className
       const classDoc = await getDoc(doc(db, "classes", classId));
       const className = classDoc.exists()
         ? classDoc.data().className
         : "Unknown Class";
 
-      // 🔹 Step 2: Check teacher conflict
+      // 🔹 Step 2: Teacher Conflict
       const teacherBusyQuery = query(
         collection(db, "timetables"),
         where("teacherId", "==", teacherId),
@@ -73,16 +86,18 @@ export default function TimetableForm({ teachers }) {
         const data = docSnap.data();
         const dbStart = toMinutes(data.startTime);
         const dbEnd = toMinutes(data.endTime);
-        return startMin < dbEnd && endMin > dbStart; // overlap condition
+        return startMin < dbEnd && endMin > dbStart;
       });
 
       if (teacherConflict) {
         const busyClass = teacherConflict.data().className || "another class";
-        alert(`❌ Teacher is already taking class in "${busyClass}" at that time.`);
-        return; // stop execution
+        return triggerToast(
+          `Teacher is already taking class in "${busyClass}" at that time.`,
+          "error"
+        );
       }
 
-      // 🔹 Step 3: Check class conflict
+      // 🔹 Step 3: Class Conflict
       const classBusyQuery = query(
         collection(db, "timetables"),
         where("classId", "==", classId),
@@ -99,11 +114,13 @@ export default function TimetableForm({ teachers }) {
 
       if (classConflict) {
         const busyTeacher = classConflict.data().teacherName || "another teacher";
-        alert(`❌ This class already has a session with "${busyTeacher}" at that time.`);
-        return; // stop execution
+        return triggerToast(
+          `This class already has a session with "${busyTeacher}" at that time.`,
+          "error"
+        );
       }
 
-      // 🔹 Step 4: Save new timetable
+      // 🔹 Step 4: Save timetable
       const selectedTeacher = teachers.find((t) => t.id === teacherId);
       const teacherName =
         selectedTeacher?.name ||
@@ -118,13 +135,13 @@ export default function TimetableForm({ teachers }) {
         createdAt: new Date().toISOString(),
       });
 
-      // 🔹 Step 5: Update user's `classes` array (with class name)
+      // 🔹 Step 5: Update teacher's `classes`
       const teacherRef = doc(db, "users", teacherId);
       await updateDoc(teacherRef, {
         classes: arrayUnion({ id: classId, name: className }),
       });
 
-      alert("✅ Timetable added successfully!");
+      triggerToast("Timetable added successfully!", "success");
 
       // Reset form
       setForm({
@@ -137,98 +154,117 @@ export default function TimetableForm({ teachers }) {
       });
     } catch (error) {
       console.error("Error adding timetable:", error);
-      alert("❌ Failed to add timetable. Please try again.");
+      triggerToast("Failed to add timetable. Please try again.", "error");
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="table-form">
-      {/* Course Title */}
-      <div className="input-box">
-        <input
-          type="text"
-          className="w-full border rounded-lg p-2"
-          value={form.courseTitle}
-          onChange={(e) => setForm({ ...form, courseTitle: e.target.value })}
-          required
-        />
-        <label>Course Title</label>
-      </div>
+    <>
+      <form onSubmit={handleSubmit} className="table-form">
+        {/* Course Title */}
+        <div className="input-box">
+          <input
+            type="text"
+            className="w-full border rounded-lg p-2"
+            value={form.courseTitle}
+            onChange={(e) => setForm({ ...form, courseTitle: e.target.value })}
+            required
+          />
+          <label>Course Title</label>
+        </div>
 
-      {/* Class Select */}
-      <div>
-        <ClassSelect
-          selectedClass={form.classId}
-          triggerClass="table-form-trigger"
-          contentClass="table-form-content"
-          itemClass="table-form-item"
-          setSelectedClass={(val) => setForm({ ...form, classId: val })}
-        />
-      </div>
+        {/* Class Select */}
+        <div>
+          <ClassSelect
+            selectedClass={form.classId}
+            triggerClass="table-form-trigger"
+            contentClass="table-form-content"
+            itemClass="table-form-item"
+            setSelectedClass={(val) => setForm({ ...form, classId: val })}
+          />
+        </div>
 
-      {/* Teacher */}
-      <div>
-        <Select
-          value={form.teacherId}
-          onValueChange={(val) => setForm({ ...form, teacherId: val })}
-        >
-          <SelectTrigger className="w-full border rounded-lg p-2">
-            <SelectValue placeholder="Select Teacher" />
-          </SelectTrigger>
-          <SelectContent>
-            {teachers.map((t) => (
-              <SelectItem key={t.id} value={t.id}>
-                {t.name || t.fullName || t.email}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
-
-      {/* Day */}
-      <div>
-        <Select
-          value={form.day}
-          onValueChange={(val) => setForm({ ...form, day: val })}
-        >
-          <SelectTrigger className="day-select">
-            <SelectValue placeholder="Select Day" />
-          </SelectTrigger>
-          <SelectContent>
-            {["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"].map(
-              (d) => (
-                <SelectItem key={d} value={d}>
-                  {d}
+        {/* Teacher */}
+        <div>
+          <Select
+            value={form.teacherId}
+            onValueChange={(val) => setForm({ ...form, teacherId: val })}
+          >
+            <SelectTrigger className="w-full border rounded-lg p-2">
+              <SelectValue placeholder="Select Teacher" />
+            </SelectTrigger>
+            <SelectContent>
+              {teachers.map((t) => (
+                <SelectItem key={t.id} value={t.id}>
+                  {t.name || t.fullName || t.email}
                 </SelectItem>
-              )
-            )}
-          </SelectContent>
-        </Select>
-      </div>
-
-      {/* Time */}
-      <div className="table-time">
-        <div className="time">
-          <label>Start Time</label>
-          <input
-            type="time"
-            value={form.startTime}
-            onChange={(e) => setForm({ ...form, startTime: e.target.value })}
-            required
-          />
+              ))}
+            </SelectContent>
+          </Select>
         </div>
-        <div className="time">
-          <label>End Time</label>
-          <input
-            type="time"
-            value={form.endTime}
-            onChange={(e) => setForm({ ...form, endTime: e.target.value })}
-            required
-          />
-        </div>
-      </div>
 
-      <Button type="submit">Add Timetable</Button>
-    </form>
+        {/* Day */}
+        <div>
+          <Select
+            value={form.day}
+            onValueChange={(val) => setForm({ ...form, day: val })}
+          >
+            <SelectTrigger className="day-select">
+              <SelectValue placeholder="Select Day" />
+            </SelectTrigger>
+            <SelectContent>
+              {["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"].map(
+                (d) => (
+                  <SelectItem key={d} value={d}>
+                    {d}
+                  </SelectItem>
+                )
+              )}
+            </SelectContent>
+          </Select>
+        </div>
+
+        {/* Time */}
+        <div className="table-time">
+          <div className="time">
+            <label>Start Time</label>
+            <input
+              type="time"
+              value={form.startTime}
+              onChange={(e) => setForm({ ...form, startTime: e.target.value })}
+              required
+            />
+          </div>
+          <div className="time">
+            <label>End Time</label>
+            <input
+              type="time"
+              value={form.endTime}
+              onChange={(e) => setForm({ ...form, endTime: e.target.value })}
+              required
+            />
+          </div>
+        </div>
+
+        <Button type="submit" className="mt-3">
+          Add Timetable
+        </Button>
+      </form>
+
+      {/* ✅ Custom Toast UI */}
+      {showToast && (
+        <div
+          className={`fixed top-6 right-6 px-4 py-2 rounded-lg shadow-lg text-white z-[9999] transition-all duration-300 ${
+            toastType === "success"
+              ? "bg-green-500"
+              : toastType === "error"
+              ? "bg-red-500"
+              : "bg-blue-500"
+          }`}
+        >
+          {toastMessage}
+        </div>
+      )}
+    </>
   );
 }

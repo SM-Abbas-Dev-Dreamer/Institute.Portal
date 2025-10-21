@@ -1,143 +1,29 @@
-.timetable-card-outer{
-  width: 93vw;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
-  border-radius: 18px;
-  margin-top: 50px;
+.table-container{
+  background: none;
+  /* box-shadow: 4px 4px 12px #999; */
+  padding: 10px;
+  border-radius: 20px;
+  width: 100%;
+  margin: auto;
   overflow-x: auto;
 }
-.timetable-card {
-  width: 3500px;
-}
+.table-container table{
+  background: pink;
+  margin: auto;
+  width: 1000px;
 
-.timetable-title {
-  font-size: 24px;
-  text-align: center;
-  font-weight: bold;
-  color: #555;
 }
-
-.table-container {
+.table-container table thead{
+  background: #777;
+  color: #fff;
 }
-
-.timetable-table {
-  width: 100%;
-  border-collapse: collapse;
+.table-container table thead tr{
 }
-
-.timetable-table th,
-.timetable-table td {
-  border: 1px solid #ddd;
-  padding: px;
-  text-align: center;
+.table-container table tbody tr:nth-child(odd){
+  background: #888;
 }
-
-.day-header {
-  background-color: #2c3e50;
-  color: white;
-  position: sticky;
-  left: 0;
-  z-index: 2;
+.table-container table tbody tr{
+  padding: 10px 0;
 }
-
-.time-header {
-  background-color: #333;
-  color: white;
-  widt: 100px;
-}
-
-.day-column {
-  font-weight: 600;
-  background-color: #f4f4f4;
-  position: sticky;
-  left: 0;
-}
-
-.time-cell.free {
-  color: #888;
-  font-style: italic;
-}
-
-.time-cell.occupied {
-  background-color: #e7f0ff;
-  color: #003366;
-  font-weight: 500;
-}
-
-.entry-box {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.entry-actions {
-  display: flex;
-  justify-content: center;
-  gap: 8px;
-  margin-top: 5px;
-}
-
-.edit-btn {
-  background-color: #3498db;
-  color: white;
-}
-
-.delete-btn {
-  background-color: #e74c3c;
-  color: white;
-}
-
-.edit-form {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  margin-top: 10px;
-}
-
-.dialog-footer {
-  display: flex;
-  justify-content: flex-end;
-  gap: 10px;
-}
-
-.cancel-btn {
-  background-color: #f4f4f4;
-}
-
-.save-btn {
-  background-color: #3498db;
-  color: white;
-}
-/* ----------------------- */
-/* 📅 Timetable Cell Style */
-/* ----------------------- */
-
-.entry-box {
-  position: relative;
-  padding: 4px;
-  text-align: center;
-}
-
-/* By default, buttons hidden */
-.entry-actions {
-  opacity: 0;
-  visibility: hidden;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  display: flex;
-  gap: 6px;
-  transition: all 0.3s ease;
-}
-
-/* 🖱️ Show on hover (Desktop) */
-.time-cell:hover .entry-actions {
-  opacity: 1;
-  visibility: visible;
-}
-
-/* 💡 For mobile (tap once to show) */
-.time-cell.active .entry-actions {
-  opacity: 1;
-  visibility: visible;
-}
+.table-container table tbody tr th{}
+.table-container table tbody tr td{}

@@ -37,17 +37,22 @@
   background-color: #fff;
   border-radius: 1rem;
   overflow: hidden;
+  height: 300px;
   margin-bottom: 1rem;
 }
 
 .submit-btn {
  padding: 10px;
- background: #000;
+ background: #444;
+ color: #ddd;
+ float: right;
 }
 
 .submit-btn:hover {
   transform: scale(1.03);
-  background: linear-gradient(90deg, #1d4ed8, #4338ca);
+  background-color: #000;
+  cursor: pointer;
+  transition: 0.3s;
 }
 
 .recent-applications {
@@ -62,7 +67,8 @@
 .recent-applications h3 {
   font-size: 1.5rem;
   font-weight: 600;
-  color: #1e3a8a;
+  text-align: center;
+  color: #333;
   margin-bottom: 1rem;
 }
 
@@ -72,17 +78,17 @@
 }
 
 .applications-table th {
-  background-color: #2563eb;
+  background: #444;
   color: white;
   text-align: left;
   padding: 10px;
-  border-radius: 5px 5px 0 0;
 }
 
 .applications-table td {
   padding: 10px;
   border-bottom: 1px solid #ddd;
   vertical-align: top;
+  cursor: pointer;
 }
 
 .applications-table tr:hover {
@@ -98,8 +104,9 @@
 }
 
 .status.pending {
-  background-color: #fde68a;
-  color: #92400e;
+  background: #555;
+  color: #fff;
+  margin: 5px 0;
 }
 
 .status.approved {

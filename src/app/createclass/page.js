@@ -161,12 +161,14 @@ export default function CreateClassPage() {
 
             {/* 🔹 Subject Input (Todo style) */}
             <div className="subject-section">
+              <div className="subject-input-btn">
+
               <div className="subject input-box">
                 <input
                   type="text"
                   {...register("subjectInput")}
                   placeholder="Enter Subject"
-                />
+                  />
               </div>
               <Button
                 type="button"
@@ -175,9 +177,10 @@ export default function CreateClassPage() {
                     document.querySelector("[name='subjectInput']").value
                   )
                 }
-              >
+                >
                 Add Subject
               </Button>
+                </div>
 
               {/* 🔹 Show Added Subjects */}
               {fields.length > 0 && (
@@ -218,7 +221,7 @@ export default function CreateClassPage() {
         <div className="class-list mt-4">
           <h2></h2>
           {classes.length === 0 ? (
-            <p>No classes created yet.</p>
+            <Loading2/>
           ) : (
             <Table className="mt-3 border rounded-lg">
               <TableHeader>

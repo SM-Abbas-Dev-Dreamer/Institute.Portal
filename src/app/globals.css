@@ -134,3 +134,7 @@ body::-webkit-scrollbar{
 body{
     background: rgba(245, 222, 179, 0.329);
 }
+.loader{
+    width: 500px;
+    background: red;
+}

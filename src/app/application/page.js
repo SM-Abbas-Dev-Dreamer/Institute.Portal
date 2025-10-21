@@ -126,7 +126,7 @@ const ApplicationPage = () => {
   return (
     <div className="application-page">
       <div className="application-card">
-        <h2 className="page-title">📨 Submit Your Application</h2>
+        <h2 className="page-title"> Submit Your Application</h2>
         {message && <p className="message">{message}</p>}
 
         <form onSubmit={handleSubmit}>
@@ -140,7 +140,7 @@ const ApplicationPage = () => {
             className="rich-editor"
           />
           <button type="submit" className="submit-btn">
-            ✉️ Send Application
+            Send Application
           </button>
         </form>
       </div>

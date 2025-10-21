@@ -1,0 +1,188 @@
+/* :root {
+  --bg: #0f1724;
+  --card: #0b1220;
+  --muted: #94a3b8;
+  --accent: #7c3aed;
+  --accent-2: #06b6d4;
+  --cell: #0f172b;
+  --gap: 10px;
+  --font: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+  font-family: var(--font);
+  background: linear-gradient(180deg, #071029 0%, #061226 60%);
+  color: #e6eef8;
+}
+
+.wrap {
+  max-width: 1100px;
+  margin: 36px auto;
+  padding: 22px;
+  border-radius: 14px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0.01));
+  box-shadow: 0 8px 30px rgba(2, 6, 23, 0.7);
+}
+
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 18px;
+}
+
+header h1 {
+  font-size: 20px;
+  margin: 0;
+}
+
+header p {
+  color: var(--muted);
+  margin: 0;
+  font-size: 13px;
+}
+
+.table-wrap {
+  overflow: auto;
+  border-radius: 10px;
+  padding: 6px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.01), transparent);
+}
+
+table {
+  width: 100%;
+  min-width: 900px;
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+th,
+td {
+  padding: 14px 12px;
+  text-align: left;
+  border-right: 1px solid rgba(255, 255, 255, 0.03);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+thead th {
+  position: sticky;
+  top: 0;
+  background: linear-gradient(180deg, #071737 0%, #0b2540 100%);
+  backdrop-filter: blur(4px);
+  z-index: 4;
+  color: #e8f0ff;
+  font-weight: 600;
+  font-size: 13px;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.04);
+}
+
+tbody th {
+  position: sticky;
+  left: 0;
+  background: linear-gradient(90deg, #081026 0%, #08162a 120%);
+  z-index: 3;
+  font-weight: 700;
+  color: #fff;
+  border-right: 2px solid rgba(255, 255, 255, 0.04);
+}
+
+.time-cell {
+  font-size: 12px;
+  color: var(--muted);
+  min-width: 110px;
+}
+
+.lesson {
+  border-radius: 8px;
+  padding: 10px;
+  background: linear-gradient(180deg, rgba(124, 58, 237, 0.12), rgba(6, 182, 212, 0.06));
+  box-shadow: inset 0 -6px 16px rgba(0, 0, 0, 0.3);
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+.lesson:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 10px 30px rgba(2, 6, 23, 0.6);
+}
+
+.subject {
+  font-weight: 700;
+  font-size: 14px;
+  margin-bottom: 4px;
+}
+
+.meta {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+td[data-sub="math"] .lesson {
+  background: linear-gradient(180deg, rgba(124, 58, 237, 0.16), rgba(124, 58, 237, 0.04));
+  border: 1px solid rgba(124, 58, 237, 0.12);
+}
+
+td[data-sub="eng"] .lesson {
+  background: linear-gradient(180deg, rgba(6, 182, 212, 0.12), rgba(29, 54, 58, 0.04));
+  border: 1px solid rgba(6, 182, 212, 0.12);
+}
+
+td[data-sub="sci"] .lesson {
+  background: linear-gradient(180deg, rgba(34, 197, 94, 0.12), rgba(34, 197, 94, 0.04));
+  border: 1px solid rgba(34, 197, 94, 0.12);
+}
+
+td[data-sub="isl"] .lesson {
+  background: linear-gradient(180deg, rgba(234, 88, 12, 0.12), rgba(234, 88, 12, 0.04));
+  border: 1px solid rgba(234, 88, 12, 0.12);
+}
+
+td[data-sub="free"] .lesson {
+  background: transparent;
+  border: 0;
+  color: var(--muted);
+}
+
+.legend {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 12px;
+}
+
+.legend .item {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 4px;
+}
+
+.lesson:focus {
+  box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.12);
+}
+
+@media (max-width: 700px) {
+  header h1 {
+    font-size: 17px;
+  }
+  table {
+    min-width: 700px;
+  }
+  th,
+  td {
+    padding: 10px;
+  }
+} */

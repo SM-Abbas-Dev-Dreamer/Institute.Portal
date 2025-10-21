@@ -21,7 +21,7 @@
 }
 .table-form .input-box input:focus ~ label,
 .table-form .input-box input:valid ~ label{
-  transform: translate(-10px,-35px);
+  transform: translate(-10px,-45px);
   font-weight: 600;
 }
 .table-form .table-form-trigger,.table-form .day-select{

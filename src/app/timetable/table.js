@@ -37,24 +37,26 @@ export default function TimetableTable({ timetable, selectedClass, classes }) {
     day: "",
   });
 
-  const timeSlots = Array.from({ length: 24 }, (_, i) => {
-    return `${formatTime(i)} - ${formatTime(i + 1)}`;
-  });
+  const timeSlots = [
+    "08:00 - 09:00",
+    "09:00 - 10:00",
+    "10:00 - 11:00",
+    "11:00 - 12:00",
+    "12:00 - 13:00",
+    "13:30 - 14:30",
+  ];
 
-  const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+  const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
 
   const getClassName = (classId) => {
     return classes.find((c) => c.id === classId)?.className || "";
   };
 
-  // 🔹 Delete timetable entry
   const handleDelete = async (entry) => {
     try {
       await deleteDoc(doc(db, "timetables", entry.id));
       const teacherRef = doc(db, "users", entry.teacherId);
-      await updateDoc(teacherRef, {
-        classes: arrayRemove(entry.classId),
-      });
+      await updateDoc(teacherRef, { classes: arrayRemove(entry.classId) });
       alert("Timetable entry deleted successfully!");
     } catch (err) {
       console.error(err);
@@ -62,7 +64,6 @@ export default function TimetableTable({ timetable, selectedClass, classes }) {
     }
   };
 
-  // 🔹 Start editing
   const handleEdit = (entry) => {
     setEditingEntry(entry);
     setUpdatedForm({
@@ -73,16 +74,13 @@ export default function TimetableTable({ timetable, selectedClass, classes }) {
     });
   };
 
-  // 🔹 Save edited data
   const handleUpdate = async () => {
     if (!editingEntry) return;
     try {
       const entryRef = doc(db, "timetables", editingEntry.id);
       await updateDoc(entryRef, { ...updatedForm });
       const teacherRef = doc(db, "users", editingEntry.teacherId);
-      await updateDoc(teacherRef, {
-        classes: arrayUnion(editingEntry.classId),
-      });
+      await updateDoc(teacherRef, { classes: arrayUnion(editingEntry.classId) });
       alert("Timetable updated successfully!");
       setEditingEntry(null);
     } catch (err) {
@@ -91,7 +89,6 @@ export default function TimetableTable({ timetable, selectedClass, classes }) {
     }
   };
 
-  // 🔹 Handle cell tap (for mobile)
   const handleCellClick = (e) => {
     document.querySelectorAll(".time-cell.active").forEach((cell) => {
       if (cell !== e.currentTarget) cell.classList.remove("active");
@@ -111,46 +108,34 @@ export default function TimetableTable({ timetable, selectedClass, classes }) {
             <table className="timetable-table">
               <thead>
                 <tr>
-                  <th className="day-header">Day / Time</th>
+                  <th>Days / Time</th>
                   {timeSlots.map((slot) => (
-                    <th key={slot} className="time-header">
-                      {slot}
-                    </th>
+                    <th key={slot}>{slot}</th>
                   ))}
                 </tr>
               </thead>
-
               <tbody>
                 {days.map((day) => (
                   <tr key={day}>
-                    <td className="day-column">{day}</td>
+                    <th>{day}</th>
                     {timeSlots.map((slot) => {
-                      const startHour = slot.split(" - ")[0];
-                      const startHour24 = parseInt(startHour.split(":")[0], 10) % 24;
-
                       const entries = timetable.filter(
-                        (t) =>
-                          t.day === day &&
-                          parseInt(t.startTime.split(":")[0], 10) === startHour24
+                        (t) => t.day === day && `${t.startTime} - ${t.endTime}` === slot
                       );
-
                       return (
                         <td
                           key={slot}
-                          className={`time-cell ${
-                            entries.length > 0 ? "occupied" : "free"
-                          }`}
+                          className={`time-cell ${entries.length > 0 ? "occupied" : "free"}`}
                           onClick={handleCellClick}
                         >
                           {entries.length > 0 ? (
                             entries.map((e, idx) => (
-                              <div key={idx} className="entry-box">
-                                <div className="entry-info">
-                                  {e.courseTitle} ({e.teacherName})
-                                </div>
+                              <div key={idx} className="lesson">
+                                <div className="subject">{e.courseTitle}</div>
+                                <div className="meta">{e.teacherName}</div>
                                 <div className="entry-actions">
                                   <Button size="sm" className="edit-btn" onClick={() => handleEdit(e)}>
-                                    <i className="fa-solid fa-pencil"></i>
+                                    ✏️
                                   </Button>
                                   <Button
                                     size="sm"
@@ -158,7 +143,7 @@ export default function TimetableTable({ timetable, selectedClass, classes }) {
                                     className="delete-btn"
                                     onClick={() => handleDelete(e)}
                                   >
-                                    <i className="fa-solid fa-trash"></i>
+                                    🗑️
                                   </Button>
                                 </div>
                               </div>
@@ -175,7 +160,6 @@ export default function TimetableTable({ timetable, selectedClass, classes }) {
             </table>
           </div>
 
-          {/* 🔹 Edit Dialog */}
           {editingEntry && (
             <Dialog open={!!editingEntry} onOpenChange={() => setEditingEntry(null)}>
               <DialogContent>
@@ -187,44 +171,32 @@ export default function TimetableTable({ timetable, selectedClass, classes }) {
                   <Input
                     type="text"
                     value={updatedForm.courseTitle}
-                    onChange={(e) =>
-                      setUpdatedForm({ ...updatedForm, courseTitle: e.target.value })
-                    }
+                    onChange={(e) => setUpdatedForm({ ...updatedForm, courseTitle: e.target.value })}
                     placeholder="Course Title"
                   />
                   <Input
                     type="time"
                     value={updatedForm.startTime}
-                    onChange={(e) =>
-                      setUpdatedForm({ ...updatedForm, startTime: e.target.value })
-                    }
+                    onChange={(e) => setUpdatedForm({ ...updatedForm, startTime: e.target.value })}
                   />
                   <Input
                     type="time"
                     value={updatedForm.endTime}
-                    onChange={(e) =>
-                      setUpdatedForm({ ...updatedForm, endTime: e.target.value })
-                    }
+                    onChange={(e) => setUpdatedForm({ ...updatedForm, endTime: e.target.value })}
                   />
                   <Input
                     type="text"
                     value={updatedForm.day}
-                    onChange={(e) =>
-                      setUpdatedForm({ ...updatedForm, day: e.target.value })
-                    }
+                    onChange={(e) => setUpdatedForm({ ...updatedForm, day: e.target.value })}
                     placeholder="Day"
                   />
                 </div>
 
-                <DialogFooter className="dialog-footer">
+                <DialogFooter>
                   <DialogClose asChild>
-                    <Button variant="outline" className="cancel-btn">
-                      Cancel
-                    </Button>
+                    <Button variant="outline">Cancel</Button>
                   </DialogClose>
-                  <Button onClick={handleUpdate} className="save-btn">
-                    Save Changes
-                  </Button>
+                  <Button onClick={handleUpdate}>Save Changes</Button>
                 </DialogFooter>
               </DialogContent>
             </Dialog>

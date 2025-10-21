@@ -8,12 +8,14 @@
   flex-direction: column;
   align-items: center;
 }
+
 h1.createclass {
   font-size: 35px;
   font-weight: 600;
   text-align: center;
   margin-top: 100px;
 }
+
 .create-class-page .form-container form h2 {
   text-align: start;
   color: #444;
@@ -28,18 +30,20 @@ h1.createclass {
   color: #111827;
   margin-bottom: 1.5rem;
 }
-.filter{
+
+.filter {
   background: #242323;
   color: #fff;
   outline: none;
   box-shadow: none;
 }
+
 /* 🔹 Form Section */
 .form-container {
   background: #ffffff;
   padding: 2rem;
   border-radius: 1rem;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+  box-shadow: 4px 4px 12px rgba(0, 0, 0, 0.3);
   max-width: 600px;
   width: 100%;
   margin-bottom: 2rem;
@@ -52,19 +56,20 @@ h1.createclass {
   justify-content: space-between;
   gap: 2rem;
 }
-.form-container form div{
+
+.form-container form div {
   display: flex;
   justify-content: space-between;
   gap: 30px;
 }
-.form-container form div .input-box{
+
+.form-container form div .input-box {
   position: relative;
-  box-shadow: inset 2px 2px 3px #999,
-  2px 2px 3px #999;
-  border-radius: 20px;
+  border-bottom: 1px solid #777;
   width: calc(100% - 130px);
 }
-.form-container form div .input-box label{
+
+.form-container form div .input-box label {
   position: absolute;
   top: 50%;
   left: 5%;
@@ -73,85 +78,93 @@ h1.createclass {
   pointer-events: none;
   outline: none;
 }
-.form-container form div input{
+
+.form-container form div input {
   width: 100%;
   padding: 0 10px;
   outline: none;
 }
-.form-container form div button{
+
+.form-container form div button {
   width: 100px;
   float: right;
   height: 100%;
   cursor: pointer;
 }
-.form-container form div .input-box input:focus ~ label,
-.form-container form div .input-box input:valid ~ label{
-  transform: translateY(-35px);
+
+.form-container form div .input-box input:focus~label,
+.form-container form div .input-box input:valid~label {
+  transform: translate(-15px, -35px);
+  color: #666;
+  font-size: 14px;
 }
-.subject-section{
-  position: relative;
+
+.subject-section {
+  display: flex;
+  flex-direction: column;
+
 }
-.subject-section ul{
-  position: absolute;
-  box-shadow: 2px 2px 5px #999;
-  backdrop-filter: blur(1px);
+.subject-input-btn{
+  width: 100%;
+}
+
+
+
+.subject-section ul {
   top: 60px;
   display: flex;
   flex-wrap: wrap;
   margin: auto;
   padding: 10px 30px;
-  gap: 30px;
+  gap: 20px;
   border-radius: 20px;
 }
-.subject-section ul li{
-  /* background: #99999979; */
-  box-shadow:inset 2px 2px 5px #999,
-   2px 2px 5px #999;
-  width: 100px;
-  padding: 5px;
+
+.subject-section ul li {
+  background: #333;
+  padding: 5px 10px;
   font-size: 11px;
   display: flex;
   justify-content: end;
   align-items: center;
-  border-radius: 50px;
+  border-radius: 5px;
+  font-size: 15px;
   text-align: start;
-  margin: auto;
+  color: #fff;
 }
-.subject-section ul li button{
-  background: #222;
+
+.subject-section ul li button {
   height: 30px;
   width: 30px;
   margin-left: 20px;
   border-radius: 50%;
   cursor: pointer;
 }
-.subject-section ul li button i{
+
+.subject-section ul li button i {
   color: #fff;
   font-size: 18px;
 }
-.class-edit-delete button{
+
+.class-edit-delete button {
   cursor: pointer;
 }
-.form-container input {
 
-}
+.form-container input {}
 
-.form-container .input-box {
+.form-container .input-box {}
 
-}
-.form-container .input-box input {
-}
-.form-container .input-box label {
-}
-.form-container .input-box input:focus ~ label,
-.form-container .input-box input:valid ~ label {
-}
+.form-container .input-box input {}
+
+.form-container .input-box label {}
+
+.form-container .input-box input:focus~label,
+.form-container .input-box input:valid~label {}
+
 /* 🔹 Buttons */
-.form-container button {
-}
+.form-container button {}
 
-.form-container button:hover {
-}
+.form-container button:hover {}
 
 /* 🔹 Class List Section */
 .class-list {
@@ -163,12 +176,12 @@ h1.createclass {
   font-weight: 600;
   margin: 20px 0;
   text-align: center;
-  
+
 }
 
 /* 🔹 Table Styling */
 .class-list table {
-  width: min(600px,100%);
+  width: min(800px, 100%);
   margin: auto;
   text-align: center;
 }
@@ -177,13 +190,16 @@ h1.createclass {
 .class-list td {
   margin: 3px 0;
 }
-.class-list tr{
- margin: 10px 0;
+
+.class-list tr {
+  margin: 10px 0;
 }
-.class-list tr:nth-child(even){
+
+.class-list tr:nth-child(even) {
   background: #99999944;
-  
+
 }
+
 .class-list th {
   background: #444;
   color: #fff;
@@ -196,22 +212,24 @@ h1.createclass {
 }
 
 /* 🔹 Action Buttons */
-.edit-table-data{
+.edit-table-data {
   display: flex;
   justify-content: center;
   align-items: center;
 }
+
 .edit-btn {
   display: flex;
   cursor: pointer;
   justify-content: space-between;
   gap: 30px;
   background: #333;
-  padding: 5px 10px ;
+  padding: 5px 10px;
   border-radius: 50px;
   position: relative;
 }
-.edit-btn::after{
+
+.edit-btn::after {
   position: absolute;
   content: "";
   width: 2px;
@@ -229,14 +247,17 @@ h1.createclass {
 .edit-btn button:hover {
   color: #ccc;
 }
-.class-list tr:nth-child(even) .edit-btn{
+
+.class-list tr:nth-child(even) .edit-btn {
   background: none;
   border: 1px solid #555;
 }
-.class-list tr:nth-child(even) .edit-btn::after{
+
+.class-list tr:nth-child(even) .edit-btn::after {
   background: #555;
 }
-.class-list tr:nth-child(even) .edit-btn button{
+
+.class-list tr:nth-child(even) .edit-btn button {
   color: #444;
 }
 
@@ -249,4 +270,3 @@ h1.createclass {
   padding: 2rem 0;
   font-size: 1rem;
 }
-
