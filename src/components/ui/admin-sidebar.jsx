@@ -46,7 +46,7 @@ export const AdminSidebar = memo(() => {
        { name: "Result", path: "/result", icon: FileText },
       { name: "Fee", path: "/fee", icon: Users },
       { name: "Assignments", path: "/assignment", icon: FileText },
-      { name: "Attendance", path: "/attendance", icon: Users },
+      { name: "Attendance", path: "/student-attend", icon: Users },
       { name: "Application", path: "/application", icon: FileText },
     ],
     teacher: [

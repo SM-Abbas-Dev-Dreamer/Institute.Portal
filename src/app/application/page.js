@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
-
 import { auth, db } from "../../../firebaseconfig";
 import {
   doc,
@@ -17,7 +16,6 @@ import {
 } from "firebase/firestore";
 import { onAuthStateChanged } from "firebase/auth";
 
-// 🔹 Dynamic import for ReactQuill (client-side only)
 const ReactQuill = dynamic(() => import("react-quill-new"), { ssr: false });
 import "react-quill-new/dist/quill.snow.css";
 import "./application.css";
@@ -100,68 +98,60 @@ const ApplicationPage = () => {
     }
   };
 
-  // 🔹 Full Quill Toolbar (like your CodeSandbox example)
   const modules = {
     toolbar: [
-      [{ header: [1, 2, 3, 4, 5, 6, false] }],
-      [{ font: [] }],
-      [{ size: ["small", false, "large", "huge"] }], // font sizes
-      ["bold", "italic", "underline", "strike", "blockquote"],
-      [{ color: [] }, { background: [] }], // text and background color
-      [{ list: "ordered" }, { list: "bullet" }, { indent: "-1" }, { indent: "+1" }],
-      [{ align: [] }],
-      ["link", "image", "video"], // add link, image, video
-      ["clean"], // remove formatting
+      [{ header: [1, 2, 3, false] }],
+      ["bold", "italic", "underline", "strike"],
+      [{ color: [] }, { background: [] }],
+      [{ list: "ordered" }, { list: "bullet" }],
+      ["link", "image"],
+      ["clean"],
     ],
   };
 
   const formats = [
     "header",
-    "font",
-    "size",
     "bold",
     "italic",
     "underline",
     "strike",
-    "blockquote",
     "color",
     "background",
     "list",
     "bullet",
-    "indent",
-    "align",
     "link",
     "image",
-    "video",
   ];
 
   return (
-    <div className="application-container">
-      <h2>Student Application</h2>
-      {message && <p className="message">{message}</p>}
+    <div className="application-page">
+      <div className="application-card">
+        <h2 className="page-title">📨 Submit Your Application</h2>
+        {message && <p className="message">{message}</p>}
 
-      <form onSubmit={handleSubmit}>
-        <ReactQuill
-          theme="snow"
-          value={applicationText}
-          onChange={setApplicationText}
-          modules={modules}
-          formats={formats}
-          placeholder="Write your application here..."
-          className="rich-editor"
-        />
-        <button type="submit" className="submit-btn">
-          Send Application
-        </button>
-      </form>
+        <form onSubmit={handleSubmit}>
+          <ReactQuill
+            theme="snow"
+            value={applicationText}
+            onChange={setApplicationText}
+            modules={modules}
+            formats={formats}
+            placeholder="Write your application here..."
+            className="rich-editor"
+          />
+          <button type="submit" className="submit-btn">
+            ✉️ Send Application
+          </button>
+        </form>
+      </div>
 
-      {/* 🔹 Recent Applications Section */}
+      {/* 🔹 Recent Applications */}
       <div className="recent-applications">
         <h3>Your Recent Applications</h3>
         {applications.length === 0 ? (
-          <p className="text-center" >No applications sent yet.</p>
+          <p className="no-data">No applications sent yet.</p>
         ) : (
-          <table>
+          <table className="applications-table">
             <thead>
               <tr>
                 <th>Application Text</th>
@@ -175,15 +165,13 @@ const ApplicationPage = () => {
                   <td dangerouslySetInnerHTML={{ __html: app.applicationText }} />
                   <td>{app.date}</td>
                   <td
-                    className={
+                    className={`status ${
                       app.status === "Pending"
-                        ? "status pending"
+                        ? "pending"
                         : app.status === "Approved"
-                        ? "status approved"
-                        : app.status === "Rejected"
-                        ? "status rejected"
-                        : ""
-                    }
+                        ? "approved"
+                        : "rejected"
+                    }`}
                   >
                     {app.status}
                   </td>

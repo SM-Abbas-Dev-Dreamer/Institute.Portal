@@ -1,123 +1,120 @@
-/* 🔹 Main container */
-.application-container {
-  max-width: 900px;
-  margin: 40px auto;
-  border-radius: 20px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  padding: 30px 40px;
-  font-family: "Poppins", sans-serif;
+.application-page {
+  min-height: 100vh;
+  padding: 3rem 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: #222;
+  font-family: "Inter", sans-serif;
 }
 
-/* 🔹 Heading */
-.application-container h2 {
+.application-card {
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(12px);
+  box-shadow: 0 4px 25px rgba(0, 0, 0, 0.1);
+  padding: 2rem;
+  border-radius: 1.5rem;
+  max-width: 850px;
+  width: 100%;
+  margin-bottom: 2rem;
+}
+
+.page-title {
+  font-size: 1.8rem;
+  font-weight: 700;
   text-align: center;
-  margin-bottom: 25px;
-  font-size: 26px;
-  color: #333;
-  font-weight: 600;
-}
-.application-container form{
-  width: min(600,100%);
+  margin-bottom: 1rem;
+  color: #1e3a8a;
 }
 
-/* 🔹 Message */
 .message {
   text-align: center;
-  margin-bottom: 15px;
-  font-size: 15px;
+  margin-bottom: 1rem;
   font-weight: 500;
 }
 
-.message.success {
-  color: #22c55e;
+.rich-editor {
+  background-color: #fff;
+  border-radius: 1rem;
+  overflow: hidden;
+  margin-bottom: 1rem;
 }
 
-.message.error {
-  color: #ef4444;
+.submit-btn {
+ padding: 10px;
+ background: #000;
 }
 
-/* 🔹 Quill Editor Styling */
-.ql-container {
-  border-radius: 10px;
-  border: 1px solid #ddd;
-  min-height: 200px;
-  background-color: #fafafa;
+.submit-btn:hover {
+  transform: scale(1.03);
+  background: linear-gradient(90deg, #1d4ed8, #4338ca);
 }
 
-.ql-toolbar {
-  border-radius: 10px 10px 0 0;
-  border: 1px solid #ddd;
-  height: 80px;
-}
-
-/* 🔹 Send button */
-button {
- float: right;
- padding: 10px 20px;
- background: #333;
- color: #ddd;
- margin-top: 30px;
- transition: 0.3s;
- cursor: pointer;
-}
-
-button:hover {
-  background-color: #111;
-}
-
-/* 🔹 Recent Applications Table */
 .recent-applications {
-  margin-top: 30px;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 1.25rem;
+  padding: 1.5rem;
+  width: 100%;
+  max-width: 900px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
 }
 
 .recent-applications h3 {
-  text-align: center;
-  font-size: 22px;
-  margin-bottom: 20px;
-  color: #333;
-  margin-top: 70px;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #1e3a8a;
+  margin-bottom: 1rem;
 }
 
-table {
+.applications-table {
   width: 100%;
   border-collapse: collapse;
-  border-radius: 10px;
-  overflow: hidden;
-}
-table p{
 }
 
-thead {
+.applications-table th {
   background-color: #2563eb;
   color: white;
-}
-
-th, td {
   text-align: left;
-  padding: 12px 16px;
-  font-size: 15px;
+  padding: 10px;
+  border-radius: 5px 5px 0 0;
 }
 
-tbody tr:nth-child(even) {
-  background-color: #f2f6ff;
+.applications-table td {
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+  vertical-align: top;
 }
 
-tbody tr:hover {
-  background-color: #e6ecff;
+.applications-table tr:hover {
+  background-color: #f3f4f6;
 }
 
-/* 🔹 Status colors */
-.status.pending {
-  color: #f59e0b;
+.status {
   font-weight: 600;
+  padding: 4px 8px;
+  border-radius: 6px;
+  text-align: center;
+  display: inline-block;
+}
+
+.status.pending {
+  background-color: #fde68a;
+  color: #92400e;
 }
 
 .status.approved {
-  color: #16a34a;
-  font-weight: 600;
+  background-color: #bbf7d0;
+  color: #166534;
 }
 
 .status.rejected {
-  color: #dc2626;
-  font-weight: 600;
+  background-color: #fecaca;
+  color: #991b1b;
+}
+
+.no-data {
+  text-align: center;
+  color: #555;
+  font-style: italic;
+  margin-top: 1rem;
 }
