@@ -35,14 +35,6 @@ const ProfilePage = () => {
     return () => unsubscribe();
   }, []);
 
-  const handleSignOut = async () => {
-    try {
-      await signOut(auth);
-      router.push("/login");
-    } catch (error) {
-      console.error("Error signing out:", error);
-    }
-  };
 
   return (
     <div style={{ textAlign: "center", marginTop: "50px" }}>
@@ -65,20 +57,7 @@ const ProfilePage = () => {
 
       {!role && <p>Loading...</p>}
 
-      <button
-        onClick={handleSignOut}
-        style={{
-          marginTop: "20px",
-          padding: "10px 20px",
-          backgroundColor: "#0070f3",
-          color: "#fff",
-          border: "none",
-          borderRadius: "6px",
-          cursor: "pointer",
-        }}
-      >
-        Sign Out
-      </button>
+      
     </div>
   );
 };

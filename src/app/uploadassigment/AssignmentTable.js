@@ -107,7 +107,7 @@ export default function AssignmentTable({ teacher }) {
             No assignments created yet.
           </p>
         ) : (
-          <Table>
+          <Table  >
             <TableCaption>All your created assignments</TableCaption>
             <TableHeader>
               <TableRow>

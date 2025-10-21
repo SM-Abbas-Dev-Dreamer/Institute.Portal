@@ -1,60 +1,143 @@
-.timetable-table-container {
-  background: #ffffff;
-  border-radius: 16px;
-  border: 2px solid #bfdbfe;
-  padding: 1.5rem;
-  margin-top: 1.5rem;
-  box-shadow: 0 4px 10px rgba(37, 99, 235, 0.1);
+.timetable-card-outer{
+  width: 93vw;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
+  border-radius: 18px;
+  margin-top: 50px;
   overflow-x: auto;
 }
-
-.timetable-table-container h3 {
-  color: #cfcfcf;
-  font-weight: 700;
-  margin-bottom: 1rem;
+.timetable-card {
+  width: 3500px;
 }
 
-.styled-table {
+.timetable-title {
+  font-size: 24px;
+  text-align: center;
+  font-weight: bold;
+  color: #555;
+}
+
+.table-container {
+}
+
+.timetable-table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 0.95rem;
+}
+
+.timetable-table th,
+.timetable-table td {
+  border: 1px solid #ddd;
+  padding: px;
   text-align: center;
 }
 
-.styled-table th,
-.styled-table td {
-  border: 1px solid #dbeafe;
-  padding: 12px 10px;
+.day-header {
+  background-color: #2c3e50;
+  color: white;
+  position: sticky;
+  left: 0;
+  z-index: 2;
 }
 
-.styled-table thead {
-  background-color: #555;
+.time-header {
+  background-color: #333;
+  color: white;
+  widt: 100px;
+}
+
+.day-column {
+  font-weight: 600;
+  background-color: #f4f4f4;
+  position: sticky;
+  left: 0;
+}
+
+.time-cell.free {
+  color: #888;
+  font-style: italic;
+}
+
+.time-cell.occupied {
+  background-color: #e7f0ff;
+  color: #003366;
+  font-weight: 500;
+}
+
+.entry-box {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.entry-actions {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 5px;
+}
+
+.edit-btn {
+  background-color: #3498db;
   color: white;
 }
 
-.styled-table th {
-  font-weight: 600;
+.delete-btn {
+  background-color: #e74c3c;
+  color: white;
 }
 
-.styled-table tr:nth-child(even) {
-  background-color: #d6d8db;
+.edit-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 10px;
 }
 
-.styled-table td {
-  transition: background-color 0.3s ease-in-out;
+.dialog-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
 }
 
-.styled-table td.bg-blue-100 {
-  background-color: #dbeafe !important;
-  color: #1e3a8a;
-  font-weight: 500;
-  white-space: pre-line;
+.cancel-btn {
+  background-color: #f4f4f4;
 }
 
-.styled-table td.italic {
-  font-style: italic;
-  color: #9ca3af;
+.save-btn {
+  background-color: #3498db;
+  color: white;
 }
-.day-table{
-  background: rgb(188, 185, 189);
+/* ----------------------- */
+/* 📅 Timetable Cell Style */
+/* ----------------------- */
+
+.entry-box {
+  position: relative;
+  padding: 4px;
+  text-align: center;
+}
+
+/* By default, buttons hidden */
+.entry-actions {
+  opacity: 0;
+  visibility: hidden;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  gap: 6px;
+  transition: all 0.3s ease;
+}
+
+/* 🖱️ Show on hover (Desktop) */
+.time-cell:hover .entry-actions {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* 💡 For mobile (tap once to show) */
+.time-cell.active .entry-actions {
+  opacity: 1;
+  visibility: visible;
 }

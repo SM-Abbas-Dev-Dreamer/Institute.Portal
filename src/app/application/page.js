@@ -20,7 +20,6 @@ import { onAuthStateChanged } from "firebase/auth";
 // 🔹 Dynamic import for ReactQuill (client-side only)
 const ReactQuill = dynamic(() => import("react-quill-new"), { ssr: false });
 import "react-quill-new/dist/quill.snow.css";
-
 import "./application.css";
 
 const ApplicationPage = () => {
@@ -101,33 +100,44 @@ const ApplicationPage = () => {
     }
   };
 
-  // 🔹 Quill Toolbar Configuration
+  // 🔹 Full Quill Toolbar (like your CodeSandbox example)
   const modules = {
     toolbar: [
-      [{ header: [1, 2, 3, false] }],
-      ["bold", "italic", "underline", "strike"],
+      [{ header: [1, 2, 3, 4, 5, 6, false] }],
+      [{ font: [] }],
+      [{ size: ["small", false, "large", "huge"] }], // font sizes
+      ["bold", "italic", "underline", "strike", "blockquote"],
+      [{ color: [] }, { background: [] }], // text and background color
+      [{ list: "ordered" }, { list: "bullet" }, { indent: "-1" }, { indent: "+1" }],
       [{ align: [] }],
-      [{ list: "ordered" }, { list: "bullet" }],
-      ["link"],
-      ["clean"],
+      ["link", "image", "video"], // add link, image, video
+      ["clean"], // remove formatting
     ],
   };
 
   const formats = [
     "header",
+    "font",
+    "size",
     "bold",
     "italic",
     "underline",
     "strike",
-    "align",
+    "blockquote",
+    "color",
+    "background",
     "list",
     "bullet",
+    "indent",
+    "align",
     "link",
+    "image",
+    "video",
   ];
 
   return (
     <div className="application-container">
-      <h2>📝 Student Application</h2>
+      <h2>Student Application</h2>
       {message && <p className="message">{message}</p>}
 
       <form onSubmit={handleSubmit}>
@@ -147,9 +157,9 @@ const ApplicationPage = () => {
 
       {/* 🔹 Recent Applications Section */}
       <div className="recent-applications">
-        <h3>📄 Your Recent Applications</h3>
+        <h3>Your Recent Applications</h3>
         {applications.length === 0 ? (
-          <p>No applications sent yet.</p>
+          <p className="text-center" >No applications sent yet.</p>
         ) : (
           <table>
             <thead>

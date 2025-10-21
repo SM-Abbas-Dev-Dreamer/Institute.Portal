@@ -2,7 +2,6 @@
 .application-container {
   max-width: 900px;
   margin: 40px auto;
-  background: #ffffff;
   border-radius: 20px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
   padding: 30px 40px;
@@ -16,6 +15,9 @@
   font-size: 26px;
   color: #333;
   font-weight: 600;
+}
+.application-container form{
+  width: min(600,100%);
 }
 
 /* 🔹 Message */
@@ -38,33 +40,29 @@
 .ql-container {
   border-radius: 10px;
   border: 1px solid #ddd;
-  min-height: 150px;
+  min-height: 200px;
   background-color: #fafafa;
 }
 
 .ql-toolbar {
   border-radius: 10px 10px 0 0;
   border: 1px solid #ddd;
-  background-color: #f8f9fa;
+  height: 80px;
 }
 
 /* 🔹 Send button */
 button {
-  display: block;
-  width: 200px;
-  margin: 20px auto 40px auto;
-  background-color: #2563eb;
-  color: white;
-  border: none;
-  padding: 12px 0;
-  border-radius: 10px;
-  font-size: 16px;
-  cursor: pointer;
-  transition: 0.3s ease;
+ float: right;
+ padding: 10px 20px;
+ background: #333;
+ color: #ddd;
+ margin-top: 30px;
+ transition: 0.3s;
+ cursor: pointer;
 }
 
 button:hover {
-  background-color: #1d4ed8;
+  background-color: #111;
 }
 
 /* 🔹 Recent Applications Table */
@@ -77,6 +75,7 @@ button:hover {
   font-size: 22px;
   margin-bottom: 20px;
   color: #333;
+  margin-top: 70px;
 }
 
 table {
@@ -84,6 +83,8 @@ table {
   border-collapse: collapse;
   border-radius: 10px;
   overflow: hidden;
+}
+table p{
 }
 
 thead {

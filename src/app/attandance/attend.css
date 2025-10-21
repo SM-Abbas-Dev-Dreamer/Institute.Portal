@@ -1,69 +1,77 @@
-.Attand-section{
-  width: min(600px , 100%);
+.Attand-section {
+  width: min(600px, 100%);
   margin: 50px auto;
 }
-.Attand-section-box{
+.Attand-section-box {
   background: none;
   box-shadow: 2px 2px 15px #999;
 }
-.Attand-section .selection-boxes{
+.Attand-section .selection-boxes {
   display: flex;
   justify-content: space-between;
   gap: 30px;
+  flex-wrap: wrap;
 }
-.Attand-section .select-box{
+.Attand-section .select-box {
   box-shadow: none;
   outline: none;
   cursor: pointer;
   background: transparent;
 }
-@media(max-width:400px){
-  .Attand-section .selection-boxes{
+.Attand-section .select-box:nth-child(2) {
+  width: 200px;
+}
+@media (max-width: 400px) {
+  .Attand-section .select-box:nth-child(2) {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .Attand-section .selection-boxes {
     flex-direction: column;
     gap: 10px;
   }
-
+  .Attand-section .select-box {
+    width: 100%;
+    margin: auto;
+  }
 }
-.Attand-section .select-box:nth-child(2){
-  padding: 5px 30px;
-}
-.attend-table thead{
+.attend-table thead {
   background: #444;
   pointer-events: none;
-
 }
-.attend-table-head{
+.attend-table-head {
   color: #eee;
   font-size: 16px;
-
 }
-.attend-table tr{
+.attend-table tr {
 }
-.attend-table tr:nth-child(even){
+.attend-table tr:nth-child(even) {
   background: #99999946;
 }
-.table-buttons{
+.table-buttons {
 }
-.table-buttons button{
+.table-buttons button {
   /* padding: 5px; */
   cursor: pointer;
   border-radius: 50%;
 }
-.table-bottom-bage{
+.table-bottom-bage {
   padding: 5px 20px;
   font-size: 14px;
   background: none;
-  border: 1px  solid #999;
+  border: 1px solid #999;
 }
-.table-bottom-bage:nth-child(1){
+.table-bottom-bage:nth-child(1) {
   color: green;
 }
-.table-bottom-bage:nth-child(2){
+.table-bottom-bage:nth-child(2) {
   color: red;
 }
-.table-bottom-bage:nth-child(3){
+.table-bottom-bage:nth-child(3) {
   color: navy;
 }
-button{
+button {
   cursor: pointer;
 }
