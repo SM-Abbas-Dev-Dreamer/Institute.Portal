@@ -1,7 +1,7 @@
 "use client";
 import { memo } from "react";
 import { motion } from "framer-motion";
-import { Button } from "@/components/ui/button";
+import { Button } from "../ui/button";
 import { Users, BarChart3, Download, Settings } from "lucide-react";
 const actions = [
   {

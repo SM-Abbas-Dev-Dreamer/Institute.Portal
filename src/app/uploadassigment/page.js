@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "../../../firebaseconfig";
-import { Separator } from "@/components/ui/separator";
+import { Separator } from "../../components/ui/separator";
 import AssignmentForm from "./AssignmentForm";
 import AssignmentTable from "./AssignmentTable";
 

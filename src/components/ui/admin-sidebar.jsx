@@ -23,7 +23,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarRail,
-} from "@/components/ui/sidebar";
+} from "../ui/sidebar";
 
 // ✅ Lucide Icons
 import { LayoutDashboard, Users, FileText, User } from "lucide-react";
@@ -43,11 +43,10 @@ export const AdminSidebar = memo(() => {
       { name: "Create User", path: "/signup", icon: User },
       { name: "Attendance", path: "/attendance", icon: FileText },
       { name: "Assignments", path: "/uploadassignment", icon: Users },
-       { name: "Result", path: "/result", icon: FileText },
       { name: "Fee", path: "/fee", icon: Users },
-      { name: "Assignments", path: "/assignment", icon: FileText },
       { name: "Attendance", path: "/student-attend", icon: Users },
       { name: "Application", path: "/application", icon: FileText },
+      { name: "Members", path: "/users", icon: Users },
     ],
     teacher: [
       { name: "Attendance", path: "/attendance", icon: FileText },
@@ -55,9 +54,7 @@ export const AdminSidebar = memo(() => {
       
     ],
     student: [
-      { name: "Result", path: "/result", icon: FileText },
       { name: "Fee", path: "/fee", icon: Users },
-      { name: "Assignments", path: "/assignment", icon: FileText },
       { name: "Attendance", path: "/attendance", icon: Users },
       { name: "Application", path: "/application", icon: FileText },
     ],

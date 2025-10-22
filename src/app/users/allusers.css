@@ -11,7 +11,7 @@ h1 {
 }
 
 .users-table {
-  width: 100%;
+  width: min(1600px,100%);
   border-collapse: collapse;
   background: white;
   border-radius: 10px;
@@ -27,12 +27,12 @@ h1 {
 }
 
 .users-table th {
-  background: #009688;
+  background: gray;
   color: white;
 }
 
 .users-table tr:nth-child(even) {
-  background-color: #f2f2f2;
+  background-color: #aca5a52d;
 }
 
 .users-table select {

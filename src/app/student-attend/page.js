@@ -17,8 +17,8 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { Checkbox } from "@/components/ui/checkbox";
+} from "../../components/ui/card";
+import { Checkbox } from "../../components/ui/checkbox";
 
 const monthData = [
   { month: "January", Mathematics: 80, Physics: 75, "Computer Science": 90, English: 70, Islamiat: 85 },

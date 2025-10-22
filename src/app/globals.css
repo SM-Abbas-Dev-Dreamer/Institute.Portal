@@ -138,3 +138,7 @@ body{
     width: 500px;
     background: red;
 }
+.select-triger{
+    box-shadow: none;
+    outline: none;
+}

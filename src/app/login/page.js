@@ -14,7 +14,7 @@ import {
   SelectLabel,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from "../../components/ui/select";
 
 const LogIn = () => {
   const [email, setEmail] = useState("");
@@ -89,7 +89,7 @@ const LogIn = () => {
           </div>
 
           <Select value={role} onValueChange={(value) => setRole(value)}>
-            <SelectTrigger className="role-select-trigger w-[300px] ">
+            <SelectTrigger className="role-select-trigger  ">
               <SelectValue placeholder="Select Role w-[200px]   " />
             </SelectTrigger>
 

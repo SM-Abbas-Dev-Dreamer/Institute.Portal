@@ -1,11 +1,11 @@
 "use client";
 import React, { useState } from "react";
-import { DashboardCard } from "@/components/ui/dashboard-card";
-import { RevenueChart } from "@/components/ui/revenue-chart";
-import { UsersTable } from "@/components/ui/users-table";
-import { QuickActions } from "@/components/ui/quick-actions";
-import { SystemStatus } from "@/components/ui/system-status";
-import { RecentActivity } from "@/components/ui/recent-activity";
+import { DashboardCard } from "../ui/dashboard-card";
+import { RevenueChart } from "../ui/revenue-chart";
+import { UsersTable } from "../ui/users-table";
+import { QuickActions } from "../ui/quick-actions";
+import { SystemStatus } from "../ui/system-status";
+import { RecentActivity } from "../ui/recent-activity";
 import { Users, Activity, DollarSign, Eye } from "lucide-react";
 
 const stats = [
