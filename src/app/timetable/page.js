@@ -4,7 +4,7 @@ import { db } from "../../../firebaseconfig";
 import { collection, onSnapshot, query, where } from "firebase/firestore";
 import TimetableForm from "./timetableform";
 import TimetableTable from "./table";
-import ClassSelect from "../components/selectclass/page";
+import ClassSelect from "../components/selectclass/classSelect";
 import { Card, CardContent, CardHeader, CardTitle } from "../../components/ui/card";
 import "./AdminTimetablePage.css";
 import { Button } from "../../components/ui/button";

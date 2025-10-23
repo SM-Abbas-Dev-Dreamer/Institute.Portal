@@ -13,7 +13,7 @@ import {
   getDoc,
 } from "firebase/firestore";
 import { Button } from "../../components/ui/button";
-import ClassSelect from "../components/selectclass/page";
+import ClassSelect from "../components/selectclass/classSelect";
 import "./TimetableForm.css";
 import {
   Select,

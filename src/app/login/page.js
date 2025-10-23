@@ -6,7 +6,6 @@ import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth, db } from "../../../firebaseconfig";
 import { doc, getDoc } from "firebase/firestore";
 import { useRouter } from "next/navigation";
-import Loading from "../components/loading/loading"
 import {
   Select,
   SelectContent,
@@ -16,13 +15,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../../components/ui/select";
+import Loading3 from "../components/loading/loading3";
 
 const LogIn = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [role, setRole] = useState("student");
   const [error, setError] = useState("");
-  const [Loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
 
   const handleSubmit = async (e) => {
@@ -81,7 +81,6 @@ const LogIn = () => {
             <i className="fa fa-user"></i>
             <label>Email</label>
           </div>
-
           <div className="input-box">
             <input
               type="password"
@@ -120,8 +119,17 @@ const LogIn = () => {
             <div className="forget-password">
               <Link href="/reset">Forget Password?</Link>
             </div>
-            <button type="submit" disabled={Loading}>
-              {Loading ? <Loading/> : "Submit"}
+            <button type="submit" disabled={loading}>
+              <button>
+                {loading ? (
+                  <div className="flex gap-1" >
+                    Submitting.
+                    <Loading3 /> 
+                  </div>
+                ) : (
+                  "Submit"
+                )}
+              </button>
             </button>
           </div>
         </form>
