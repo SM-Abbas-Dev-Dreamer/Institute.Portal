@@ -6,6 +6,7 @@ import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth, db } from "../../../firebaseconfig";
 import { doc, getDoc } from "firebase/firestore";
 import { useRouter } from "next/navigation";
+import Loading from "../components/loading/loading"
 import {
   Select,
   SelectContent,
@@ -21,11 +22,13 @@ const LogIn = () => {
   const [password, setPassword] = useState("");
   const [role, setRole] = useState("student");
   const [error, setError] = useState("");
+  const [Loading, setLoading] = useState(false);
   const router = useRouter();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
+    setLoading(true);
 
     try {
       // 🔹 Step 1: Sign in user with Firebase Auth
@@ -57,6 +60,8 @@ const LogIn = () => {
     } catch (err) {
       console.error(err);
       setError("Invalid email or password.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -90,7 +95,7 @@ const LogIn = () => {
 
           <Select value={role} onValueChange={(value) => setRole(value)}>
             <SelectTrigger className="role-select-trigger  ">
-              <SelectValue placeholder="Select Role w-[200px]   " />
+              <SelectValue placeholder="Select Role   " />
             </SelectTrigger>
 
             <SelectContent className="role-select-content">
@@ -115,7 +120,9 @@ const LogIn = () => {
             <div className="forget-password">
               <Link href="/reset">Forget Password?</Link>
             </div>
-            <button type="submit">Submit</button>
+            <button type="submit" disabled={Loading}>
+              {Loading ? <Loading/> : "Submit"}
+            </button>
           </div>
         </form>
       </div>

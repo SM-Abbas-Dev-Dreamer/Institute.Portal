@@ -26,7 +26,7 @@ const chartData = [
   { month: "Desember", desktop: 25 },
 ]
 
-export function ChartLineDefault() {
+export default function ChartLineDefault() {
   return (
     <Card className="w-full max-w-3xl mx-auto">
       <CardHeader>

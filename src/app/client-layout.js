@@ -8,7 +8,7 @@ import { DashboardHeader } from "../components/ui/dashboard-header";
 
 export default function ClientLayout({ children }) {
   const pathname = usePathname();
-  const noSidebarRoutes = ["/login", "/signup", "/forgot-password"];
+  const noSidebarRoutes = ["/login", "/forgot-password"];
   const hideSidebar = noSidebarRoutes.includes(pathname);
 
   return hideSidebar ? (

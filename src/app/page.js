@@ -1,4 +1,4 @@
-import { ChartLineDefault } from "./components/line-Chart/page"
+import { ChartLineDefault } from "./components/line-Chart/lineChart"
 import AdminDashboard from "../components/mvpblocks/index"
 import { DashboardHeader } from "../components/ui/dashboard-header"
 
