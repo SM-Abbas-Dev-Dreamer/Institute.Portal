@@ -14,7 +14,8 @@ import {
 } from "firebase/firestore";
 import { auth, db } from "../../../../firebaseconfig";
 
-export const generateRollNumber = async () => {
+// 🔹 Helper function: Generate Roll Number
+const generateRollNumber = async () => {
   const counterRef = doc(db, "metadata", "rollNumberCounter");
   const docSnap = await getDoc(counterRef);
 
@@ -30,7 +31,8 @@ export const generateRollNumber = async () => {
   }
 };
 
-export const suggestEmail = async (inputName) => {
+// 🔹 Helper function: Suggest Email
+const suggestEmail = async (inputName) => {
   const emailDomain = "@web.com";
   if (!inputName) return "";
 
@@ -57,39 +59,47 @@ export const suggestEmail = async (inputName) => {
   return emailSuggestion;
 };
 
-export const createUserApi = async (formData) => {
-  // Step 1: Check if email already exists
-  const methods = await fetchSignInMethodsForEmail(auth, formData.email);
-  if (methods.length > 0) {
-    throw new Error("This email is already registered.");
+// 🔹 Main API route (POST)
+export async function POST(req) {
+  try {
+    const formData = await req.json();
+
+    // Check if email exists
+    const methods = await fetchSignInMethodsForEmail(auth, formData.email);
+    if (methods.length > 0) {
+      return Response.json({ error: "This email is already registered." }, { status: 400 });
+    }
+
+    // Create Auth User
+    const userCredential = await createUserWithEmailAndPassword(
+      auth,
+      formData.email,
+      formData.password
+    );
+    const user = userCredential.user;
+
+    // Generate roll number if student
+    const rollNumber =
+      formData.role === "student" ? await generateRollNumber() : null;
+
+    // Save user in Firestore
+    await setDoc(doc(db, "users", user.uid), {
+      uid: user.uid,
+      name: formData.name,
+      email: formData.email,
+      address: formData.address,
+      phone: formData.phone,
+      cnic: formData.cnic,
+      previousDiscipline: formData.previousDiscipline,
+      role: formData.role,
+      className: formData.role === "student" ? formData.className : null,
+      rollNumber,
+      createdAt: new Date(),
+    });
+
+    return Response.json({ success: true, user });
+  } catch (error) {
+    console.error(error);
+    return Response.json({ error: error.message }, { status: 500 });
   }
-
-  // Step 2: Create Firebase Auth user
-  const userCredential = await createUserWithEmailAndPassword(
-    auth,
-    formData.email,
-    formData.password
-  );
-  const user = userCredential.user;
-
-  // Step 3: Generate roll number
-  const rollNumber =
-    formData.role === "student" ? await generateRollNumber() : null;
-
-  // Step 4: Save user data in Firestore
-  await setDoc(doc(db, "users", user.uid), {
-    uid: user.uid,
-    name: formData.name,
-    email: formData.email,
-    address: formData.address,
-    phone: formData.phone,
-    cnic: formData.cnic,
-    previousDiscipline: formData.previousDiscipline,
-    role: formData.role,
-    className: formData.role === "student" ? formData.className : null,
-    rollNumber: rollNumber,
-    createdAt: new Date(),
-  });
-
-  return user;
-};
+}
