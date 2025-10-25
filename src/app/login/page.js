@@ -1,11 +1,9 @@
 "use client";
 import React, { useState } from "react";
-import "./login.css";
-import Link from "next/link";
-import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth, db } from "../../../firebaseconfig";
-import { doc, getDoc } from "firebase/firestore";
+import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
+import "./login.css"
 import {
   Select,
   SelectContent,
@@ -16,50 +14,36 @@ import {
   SelectValue,
 } from "../../components/ui/select";
 import Loading3 from "../components/loading/loading3";
+import Alert from "@mui/material/Alert";
 
 const LogIn = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [role, setRole] = useState("student");
-  const [error, setError] = useState("");
+  const { register, handleSubmit, watch, setValue } = useForm();
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
   const router = useRouter();
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const role = watch("role") || "student";
+
+  const onSubmit = async (data) => {
     setError("");
     setLoading(true);
 
     try {
-      // 🔹 Step 1: Sign in user with Firebase Auth
-      const userCredential = await signInWithEmailAndPassword(
-        auth,
-        email,
-        password
-      );
-      const user = userCredential.user;
+      const res = await fetch("/api/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
 
-      // 🔹 Step 2: Get user's role from Firestore
-      const docRef = doc(db, "users", user.uid);
-      const docSnap = await getDoc(docRef);
+      const result = await res.json();
 
-      if (docSnap.exists()) {
-        const userData = docSnap.data();
-
-        if (userData.role === role) {
-          // 🔹 Step 3: Redirect based on role
-          // if (role === "admin") router.push("/admin");
-          // else if (role === "teacher") router.push("/teacher");
-          router.push("/");
-        } else {
-          setError("❌ Role mismatch! Please select your correct role.");
-        }
-      } else {
-        setError("User record not found in Firestore.");
+      if (!res.ok) {
+        throw new Error(result.error || "Login failed");
       }
+
+      router.push("/");
     } catch (err) {
-      console.error(err);
-      setError("Invalid email or password.");
+      setError(err.message);
     } finally {
       setLoading(false);
     }
@@ -70,33 +54,34 @@ const LogIn = () => {
       <div className="login-sheet"></div>
       <div className="login">
         <h1>Log In</h1>
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit(onSubmit)}>
           <div className="input-box">
             <input
               type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              {...register("email", { required: true })}
               required
             />
             <i className="fa fa-user"></i>
             <label>Email</label>
           </div>
+
           <div className="input-box">
             <input
               type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              {...register("password", { required: true })}
               required
             />
             <i className="fa fa-lock"></i>
             <label>Password</label>
           </div>
 
-          <Select value={role} onValueChange={(value) => setRole(value)}>
-            <SelectTrigger className="role-select-trigger  ">
-              <SelectValue placeholder="Select Role   " />
+          <Select
+            value={role}
+            onValueChange={(value) => setValue("role", value)}
+          >
+            <SelectTrigger className="role-select-trigger">
+              <SelectValue placeholder="Select Role" />
             </SelectTrigger>
-
             <SelectContent className="role-select-content">
               <SelectGroup>
                 <SelectLabel className="role-select-label">Roles</SelectLabel>
@@ -113,23 +98,25 @@ const LogIn = () => {
             </SelectContent>
           </Select>
 
-          {error && <p style={{ color: "red" }}>{error}</p>}
+          {error && (
+            <Alert severity="error" sx={{ mt: 2 }}>
+              <p className="text-red-600">Email or Password invalid</p>
+            </Alert>
+          )}
 
           <div className="login-bottom">
             <div className="forget-password">
               <Link href="/reset">Forget Password?</Link>
             </div>
             <button type="submit" disabled={loading}>
-              <button>
-                {loading ? (
-                  <div className="flex gap-1" >
-                    Submitting.
-                    <Loading3 /> 
-                  </div>
-                ) : (
-                  "Submit"
-                )}
-              </button>
+              {loading ? (
+                <div className="flex gap-1">
+                  Submitting.
+                  <Loading3 />
+                </div>
+              ) : (
+                "Submit"
+              )}
             </button>
           </div>
         </form>

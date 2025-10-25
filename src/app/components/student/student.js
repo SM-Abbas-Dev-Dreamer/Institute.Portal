@@ -2,7 +2,6 @@
 import React, { useEffect, useState } from "react";
 import { auth, db } from "../../../../firebaseconfig";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
-import "./profile.css";
 
 const StudentProfile = () => {
   const [userData, setUserData] = useState(null);
@@ -40,12 +39,12 @@ const StudentProfile = () => {
         img.onload = () => {
           const canvas = document.createElement("canvas");
           const ctx = canvas.getContext("2d");
-          const width = 100;
-          const height = 100;
+          const width = 150;
+          const height = 150;
           canvas.width = width;
           canvas.height = height;
           ctx.drawImage(img, 0, 0, width, height);
-          canvas.toBlob((blob) => resolve(blob), "image/jpeg", 0.7);
+          canvas.toBlob((blob) => resolve(blob), "image/jpeg", 0.8);
         };
         img.src = event.target.result;
       };
@@ -82,86 +81,117 @@ const StudentProfile = () => {
   };
 
   return (
-    <div className="user-personal-info">
-      {userData && (
-        <div className="about">
-          <div className=" grid-box">
-            <h4>Personal Info</h4>
-            <p className="info-box">
-              <span>👤 Full Name:</span> {userData.name}
-            </p>
-            <p className="info-box">
-              <span>🧾 Admin ID:</span> {userData.adminId}
-            </p>
-            <p className="info-box">
-              <span>📧 Email:</span> {userData.email}
-            </p>
-            <p className="info-box">
-              <span>📱 Phone:</span> {userData.phone}
-            </p>
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-6">
+      {userData ? (
+        <div className="max-w-4xl w-full bg-white rounded-2xl shadow-lg p-8 grid md:grid-cols-3 gap-6">
+          {/* Profile Image Section */}
+          <div className="flex flex-col items-center text-center border-r md:border-r-gray-200">
+            <label htmlFor="imageUpload" className="cursor-pointer">
+              {preview ? (
+                <img
+                  src={preview}
+                  alt="Profile"
+                  className="w-40 h-40 rounded-full object-cover shadow-md border"
+                />
+              ) : (
+                <div className="w-40 h-40 flex items-center justify-center rounded-full bg-gray-200 text-gray-500">
+                  <i className="fa-solid fa-camera text-3xl"></i>
+                </div>
+              )}
+            </label>
+            <input
+              id="imageUpload"
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={handleImageUpload}
+            />
+            {uploading && (
+              <p className="text-sm text-blue-500 mt-2 animate-pulse">
+                Uploading...
+              </p>
+            )}
+
+            <h2 className="mt-4 text-xl font-semibold">{userData.name}</h2>
+            <p className="text-gray-600">{userData.email}</p>
+            <p className="text-gray-500 mt-1">📱 {userData.phone}</p>
           </div>
 
-          <div className=" grid-box">
-            <h4>System Management Info</h4>
-            <p className="info-box">
-              <span>🧑‍🎓 Total Students:</span> {userData.totalStudents}
-            </p>
-            <p className="info-box">
-              <span>👩‍🏫 Total Teachers:</span> {userData.totalTeachers}
-            </p>
-            <p className="info-box">
-              <span>🏫 Departments Count:</span> {userData.departments}
-            </p>
-            <p className="info-box">
-              <span>💰 Fees Collected:</span> {userData.feesCollected}
-            </p>
-            <p className="info-box">
-              <span>📦 Pending Applications:</span> {userData.pendingApps}
-            </p>
-          </div>
-          <div className=" grid-box">
-            <h4>Portal Info</h4>
-            <p className="info-box">
-              <span>⚙️ Manage Roles:</span> Yes
-            </p>
-            <p className="info-box">
-              <span>📊 Analytics Dashboard:</span> Active
-            </p>
-            <p className="info-box">
-              <span>🔔 Recent Notifications:</span> {userData.notifications}
-            </p>
-          </div>
-          <div className="grid-box">
-            <div className="user-img">
-              <label htmlFor="imageUpload">
-                {preview ? (
-                  <img src={preview} alt="Profile" />
-                ) : (
-                  <div>
-                    <i className="fa-solid fa-camera"></i>
-                  </div>
-                )}
-              </label>
-              <input
-                id="imageUpload"
-                type="file"
-                accept="image/*"
-                onChange={handleImageUpload}
-              />
-              {uploading && <p>Uploading...</p>}
-            </div>
-          </div>
+          {/* Student Details */}
+          <div className="col-span-2 grid gap-6">
+            <section className="border-b pb-4">
+              <h3 className="text-lg font-semibold text-gray-800 mb-2">
+                🎓 Student Information
+              </h3>
+              <div className="grid sm:grid-cols-2 gap-3 text-gray-700">
+                <p>
+                  <strong>Student ID:</strong> {userData.studentId || "N/A"}
+                </p>
+                <p>
+                  <strong>Department:</strong> {userData.department || "N/A"}
+                </p>
+                <p>
+                  <strong>Semester:</strong> {userData.semester || "N/A"}
+                </p>
+                <p>
+                  <strong>Session:</strong> {userData.session || "N/A"}
+                </p>
+              </div>
+            </section>
 
-          <div className=" grid-box">
-            <h4>Actions</h4>
-            <ul>
-              <li>✏️ Edit Admin Info</li>
-              <li>🧑‍💻 Add / Remove Users</li>
-              <li>🧾 Generate Reports</li>
-              <li>🔒 Change Password</li>
-            </ul>
+            {/* Academic Info */}
+            <section className="border-b pb-4">
+              <h3 className="text-lg font-semibold text-gray-800 mb-2">
+                📚 Academic Performance
+              </h3>
+              <div className="grid sm:grid-cols-2 gap-3 text-gray-700">
+                <p>
+                  <strong>GPA:</strong> {userData.gpa || "Not Available"}
+                </p>
+                <p>
+                  <strong>Total Credits:</strong>{" "}
+                  {userData.totalCredits || "0"}
+                </p>
+                <p>
+                  <strong>Completed Courses:</strong>{" "}
+                  {userData.completedCourses || "N/A"}
+                </p>
+                <p>
+                  <strong>Attendance:</strong>{" "}
+                  {userData.attendance ? `${userData.attendance}%` : "N/A"}
+                </p>
+              </div>
+            </section>
+
+            {/* System Info */}
+            <section>
+              <h3 className="text-lg font-semibold text-gray-800 mb-2">
+                ⚙️ System Information
+              </h3>
+              <div className="grid sm:grid-cols-2 gap-3 text-gray-700">
+                <p>
+                  <strong>Role:</strong> {userData.role || "Student"}
+                </p>
+                <p>
+                  <strong>Joined On:</strong>{" "}
+                  {userData.joinDate || "Not Available"}
+                </p>
+                <p>
+                  <strong>Status:</strong>{" "}
+                  <span
+                    className={`${
+                      userData.active ? "text-green-600" : "text-red-600"
+                    } font-semibold`}
+                  >
+                    {userData.active ? "Active" : "Inactive"}
+                  </span>
+                </p>
+              </div>
+            </section>
           </div>
         </div>
+      ) : (
+        <p className="text-center text-gray-500">Loading student data...</p>
       )}
     </div>
   );

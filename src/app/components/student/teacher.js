@@ -2,10 +2,9 @@
 import React, { useEffect, useState } from "react";
 import { auth, db } from "../../../../firebaseconfig";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
-// import "./profile.css";
 
 const TeacherProfile = () => {
-  const [userData, setUserData] = useState(null);
+  const [teacher, setTeacher] = useState(null);
   const [preview, setPreview] = useState(null);
   const [uploading, setUploading] = useState(false);
 
@@ -13,39 +12,39 @@ const TeacherProfile = () => {
   const UPLOAD_PRESET = "portal";
 
   useEffect(() => {
-    const fetchUserData = async () => {
+    const fetchTeacherData = async () => {
       try {
         const currentUser = auth.currentUser;
         if (!currentUser) return;
+
         const userRef = doc(db, "users", currentUser.uid);
-        const userSnap = await getDoc(userRef);
-        if (userSnap.exists()) {
-          setUserData(userSnap.data());
-          if (userSnap.data().photoURL) setPreview(userSnap.data().photoURL);
+        const snap = await getDoc(userRef);
+
+        if (snap.exists()) {
+          setTeacher(snap.data());
+          if (snap.data().photoURL) setPreview(snap.data().photoURL);
         }
       } catch (error) {
-        console.error("Error fetching user data:", error);
+        console.error("Error fetching teacher data:", error);
       }
     };
-    fetchUserData();
+    fetchTeacherData();
   }, []);
 
   const resizeImage = (file) =>
     new Promise((resolve) => {
       const reader = new FileReader();
-      reader.onload = (event) => {
+      reader.onload = (e) => {
         const img = new Image();
         img.onload = () => {
           const canvas = document.createElement("canvas");
           const ctx = canvas.getContext("2d");
-          const width = 100;
-          const height = 100;
-          canvas.width = width;
-          canvas.height = height;
-          ctx.drawImage(img, 0, 0, width, height);
-          canvas.toBlob((blob) => resolve(blob), "image/jpeg", 0.7);
+          canvas.width = 150;
+          canvas.height = 150;
+          ctx.drawImage(img, 0, 0, 150, 150);
+          canvas.toBlob((blob) => resolve(blob), "image/jpeg", 0.8);
         };
-        img.src = event.target.result;
+        img.src = e.target.result;
       };
       reader.readAsDataURL(file);
     });
@@ -60,83 +59,131 @@ const TeacherProfile = () => {
       formData.append("file", resizedBlob);
       formData.append("upload_preset", UPLOAD_PRESET);
 
-      const response = await fetch(
+      const res = await fetch(
         `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`,
         { method: "POST", body: formData }
       );
 
-      const data = await response.json();
+      const data = await res.json();
       const imageUrl = data.secure_url;
 
-      const userRef = doc(db, "users", auth.currentUser.uid);
-      await updateDoc(userRef, { photoURL: imageUrl });
+      const ref = doc(db, "users", auth.currentUser.uid);
+      await updateDoc(ref, { photoURL: imageUrl });
 
       setPreview(imageUrl);
     } catch (error) {
-      console.error("Error uploading image:", error);
+      console.error("Error uploading:", error);
     } finally {
       setUploading(false);
     }
   };
 
   return (
-    <div className="profile-section">
-      <div className="user-personal-info">
-        <div className="user-img">
-          <label htmlFor="imageUpload">
-            {preview ? (
-              <img
-                src={preview}
-                alt="Profile"
-                
-              />
-            ) : (
-              <div
-                
-              >
-                <i className="fa-solid fa-camera"></i>
-              </div>
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-6">
+      {teacher ? (
+        <div className="max-w-4xl w-full bg-white rounded-2xl shadow-lg p-8 grid md:grid-cols-3 gap-6">
+          {/* Image */}
+          <div className="flex flex-col items-center text-center border-r md:border-r-gray-200">
+            <label htmlFor="imageUpload" className="cursor-pointer">
+              {preview ? (
+                <img
+                  src={preview}
+                  alt="Profile"
+                  className="w-40 h-40 rounded-full object-cover border shadow"
+                />
+              ) : (
+                <div className="w-40 h-40 bg-gray-200 rounded-full flex items-center justify-center">
+                  <i className="fa-solid fa-camera text-3xl text-gray-600"></i>
+                </div>
+              )}
+            </label>
+            <input
+              id="imageUpload"
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={handleImageUpload}
+            />
+            {uploading && (
+              <p className="text-blue-500 mt-2 text-sm animate-pulse">
+                Uploading...
+              </p>
             )}
-          </label>
-          <input
-            id="imageUpload"
-            type="file"
-            accept="image/*"
-            onChange={handleImageUpload}
-           
-          />
-          {uploading && <p>Uploading...</p>}
-        </div>
-
-        {userData && (
-          <div className="about">
-            <h4>Personal Info</h4>
-            <p className="info-box"><span>👤 Full Name:</span> {userData.name}</p>
-            <p className="info-box"><span>🧾 Employee ID:</span> {userData.employeeId}</p>
-            <p className="info-box"><span>🏫 Department:</span> {userData.department}</p>
-            <p className="info-box"><span>📧 Email:</span> {userData.email}</p>
-            <p className="info-box"><span>📱 Phone:</span> {userData.phone}</p>
-
-            <h4>Professional Details</h4>
-            <p className="info-box"><span>📚 Subjects Taught:</span> {userData.subjects?.join(", ")}</p>
-            <p className="info-box"><span>🕐 Timetable:</span> {userData.timetable}</p>
-            <p className="info-box"><span>🎓 Qualification:</span> {userData.qualification}</p>
-            <p className="info-box"><span>💼 Experience:</span> {userData.experience} Years</p>
-
-            <h4>Portal Info</h4>
-            <p className="info-box"><span>🗓️ Attendance Summary:</span> {userData.attendanceSummary}</p>
-            <p className="info-box"><span>🧾 Assignments Given:</span> {userData.assignments}</p>
-
-            <h4>Actions</h4>
-            <ul>
-              <li>✏️ Edit Profile Info</li>
-              <li>🔑 Change Password</li>
-              <li>📤 Upload Notes</li>
-              <li>📥 Download Reports</li>
-            </ul>
+            <h2 className="mt-4 text-xl font-semibold">{teacher.name}</h2>
+            <p className="text-gray-600">{teacher.email}</p>
+            <p className="text-gray-500">📞 {teacher.phone}</p>
           </div>
-        )}
-      </div>
+
+          {/* Teacher Info */}
+          <div className="col-span-2 grid gap-6">
+            <section className="border-b pb-4">
+              <h3 className="text-lg font-semibold text-gray-800 mb-2">
+                🏫 Teaching Information
+              </h3>
+              <div className="grid sm:grid-cols-2 gap-3 text-gray-700">
+                <p>
+                  <strong>Teacher ID:</strong> {teacher.teacherId || "N/A"}
+                </p>
+                <p>
+                  <strong>Department:</strong> {teacher.department || "N/A"}
+                </p>
+                <p>
+                  <strong>Subjects:</strong> {teacher.subjects || "N/A"}
+                </p>
+                <p>
+                  <strong>Total Classes:</strong>{" "}
+                  {teacher.totalClasses || "0"}
+                </p>
+              </div>
+            </section>
+
+            {/* Academic Performance */}
+            <section className="border-b pb-4">
+              <h3 className="text-lg font-semibold text-gray-800 mb-2">
+                📅 Work Overview
+              </h3>
+              <div className="grid sm:grid-cols-2 gap-3 text-gray-700">
+                <p>
+                  <strong>Attendance:</strong>{" "}
+                  {teacher.attendance ? `${teacher.attendance}%` : "N/A"}
+                </p>
+                <p>
+                  <strong>Students Assigned:</strong>{" "}
+                  {teacher.studentsAssigned || 0}
+                </p>
+                <p>
+                  <strong>Experience:</strong>{" "}
+                  {teacher.experience || "0 Years"}
+                </p>
+                <p>
+                  <strong>Status:</strong>{" "}
+                  <span
+                    className={`${
+                      teacher.active ? "text-green-600" : "text-red-600"
+                    } font-semibold`}
+                  >
+                    {teacher.active ? "Active" : "Inactive"}
+                  </span>
+                </p>
+              </div>
+            </section>
+
+            <section>
+              <h3 className="text-lg font-semibold text-gray-800 mb-2">
+                🧾 Actions
+              </h3>
+              <ul className="list-disc pl-6 text-gray-700 space-y-1">
+                <li>Upload Assignments</li>
+                <li>View Student Reports</li>
+                <li>Schedule Classes</li>
+                <li>Submit Attendance</li>
+              </ul>
+            </section>
+          </div>
+        </div>
+      ) : (
+        <p className="text-gray-500">Loading teacher data...</p>
+      )}
     </div>
   );
 };
