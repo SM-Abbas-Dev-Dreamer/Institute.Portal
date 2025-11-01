@@ -5,12 +5,9 @@ import { useTheme } from "next-themes";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { auth, db } from "../../../firebaseconfig";
-
-// ✅ Firebase imports
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
-
-// ✅ Shadcn UI Sidebar Components
+import Navigation from "../../app/components/skelatan/navigation";
 import {
   Sidebar,
   SidebarContent,
@@ -23,47 +20,39 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarRail,
-} from "@/components/ui/sidebar";
-
-// ✅ Lucide Icons
+} from "../ui/sidebar";
 import { LayoutDashboard, Users, FileText, User } from "lucide-react";
 
 export const AdminSidebar = memo(() => {
-  const { theme, setTheme } = useTheme();
   const router = useRouter();
   const [role, setRole] = useState("");
   const [links, setLinks] = useState([]);
 
-  // ✅ Role-based navigation links
   const navLinks = {
     admin: [
       { name: "Dashboard", path: "/", icon: LayoutDashboard },
       { name: "Time Table", path: "/timetable", icon: FileText },
       { name: "Create Class", path: "/createclass", icon: Users },
       { name: "Create User", path: "/signup", icon: User },
-      { name: "Attendance", path: "/attendance", icon: FileText },
-      { name: "Assignments", path: "/uploadassignment", icon: Users },
-       { name: "Result", path: "/result", icon: FileText },
+      { name: "Attendance", path: "/attandance", icon: FileText },
+      { name: "Assignments", path: "/uploadassigment", icon: Users },
       { name: "Fee", path: "/fee", icon: Users },
-      { name: "Assignments", path: "/assignment", icon: FileText },
-      { name: "Attendance", path: "/student-attend", icon: Users },
+      { name: "Student Attendance", path: "/student-attend", icon: Users },
       { name: "Application", path: "/application", icon: FileText },
+      { name: "Members", path: "/users", icon: Users },
     ],
     teacher: [
-      { name: "Attendance", path: "/attendance", icon: FileText },
-      { name: "Assignments", path: "/uploadassignment", icon: Users },
-      
+      { name: "Attendance", path: "/attandance", icon: FileText },
+      { name: "Assignments", path: "/uploadassigment", icon: Users },
     ],
     student: [
-      { name: "Result", path: "/result", icon: FileText },
       { name: "Fee", path: "/fee", icon: Users },
-      { name: "Assignments", path: "/assignment", icon: FileText },
       { name: "Attendance", path: "/attendance", icon: Users },
       { name: "Application", path: "/application", icon: FileText },
     ],
   };
 
-  // ✅ Fetch user role from Firestore
+  // ✅ Fetch user role from Firestore or LocalStorage
   useEffect(() => {
     const fetchUserRole = async (uid) => {
       try {
@@ -73,6 +62,7 @@ export const AdminSidebar = memo(() => {
           const userData = docSnap.data();
           setRole(userData.role);
           setLinks(navLinks[userData.role] || []);
+          localStorage.setItem("userRole", userData.role);
         } else {
           console.warn("No such user found in Firestore");
         }
@@ -82,20 +72,35 @@ export const AdminSidebar = memo(() => {
     };
 
     const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user) fetchUserRole(user.uid);
-      else {
-        setRole("");
-        setLinks([]);
+      if (user) {
+        fetchUserRole(user.uid);
+      } else {
+        const savedRole = localStorage.getItem("userRole");
+        if (savedRole) {
+          // 🔹 If user already logged in before, use saved role
+          setRole(savedRole);
+          setLinks(navLinks[savedRole] || []);
+        } else {
+          setRole("");
+          setLinks([]);
+        }
       }
     });
+
+    // 🔹 Extra fallback for when Firebase takes time to initialize
+    const savedRole = localStorage.getItem("userRole");
+    if (savedRole && !role) {
+      setRole(savedRole);
+      setLinks(navLinks[savedRole] || []);
+    }
 
     return () => unsubscribe();
   }, []);
 
-  // ✅ Handle Sign Out
   const handleSignOut = async () => {
     try {
       await signOut(auth);
+      localStorage.removeItem("userRole");
       setRole("");
       setLinks([]);
       router.push("/login");
@@ -106,12 +111,11 @@ export const AdminSidebar = memo(() => {
 
   return (
     <Sidebar collapsible="icon">
-      {/* ✅ Header */}
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" asChild>
-              <Link prefetch={false} href="/dashboard">
+              <Link prefetch={false} href="/">
                 <div className="bg-primary text-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
                   <LayoutDashboard className="h-5 w-5" />
                 </div>
@@ -127,11 +131,10 @@ export const AdminSidebar = memo(() => {
         </SidebarMenu>
       </SidebarHeader>
 
-      {/* ✅ Dynamic Navigation */}
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupLabel>
-            {role ? "Navigation" : "Loading..."}
+            {role ? "Navigation" : <Navigation  />}
           </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
@@ -153,17 +156,13 @@ export const AdminSidebar = memo(() => {
         </SidebarGroup>
       </SidebarContent>
 
-      {/* ✅ Footer */}
       <SidebarFooter>
         <SidebarMenu>
-          {/* Sign Out Button */}
           <SidebarMenuItem>
             <SidebarMenuButton onClick={handleSignOut}>
               Sign Out
             </SidebarMenuButton>
           </SidebarMenuItem>
-
-          {/* Profile Link */}
           <SidebarMenuItem>
             <SidebarMenuButton asChild>
               <Link prefetch={false} href="/profile">

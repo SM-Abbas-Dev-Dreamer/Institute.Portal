@@ -1,0 +1,17 @@
+.skeltan-bars{
+    animation: skeltan 2s linear infinite;
+    width: 160px;
+    margin: 20px 0;
+    height: 10px;
+}
+@keyframes skeltan{
+    0%{
+        background: rgba(128, 128, 128, 0.534);
+    }
+    50%{
+        background: rgba(128, 128, 128, 0.158);
+    }
+    100%{
+        background: rgba(128, 128, 128, 0.534);
+    }
+}

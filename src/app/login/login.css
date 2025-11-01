@@ -17,7 +17,7 @@
     backdrop-filter: blur(10px);
 }
 .login{
-    width: 350px;
+    width: min(400px,100%);
     max-width: 600px;
     min-width: 300px;
     position: absolute;
@@ -58,7 +58,7 @@
     transition: 0.3s;
     user-select: auto;
     pointer-events: none;
-    color: #777;
+    color: #fff;
 }
 
 
@@ -69,11 +69,11 @@
     background: transparent;
     border: none;
     outline: none;
-    color: #777;
+    color: #fff;
 }
 .login form .input-box input:focus ~ label,
 .login form .input-box input:valid ~ label{
-    transform: translate(-40px,-25px);
+    transform: translate(-80%,-140%);
     color: #fff;
 }
 .login form .input-box input:focus ~ i,
@@ -89,37 +89,31 @@
     padding: 5px 0;
     border-radius: 30px;
 }
-/* .login form .login-select option{
-    background: #000000be;
-    color: #ddd;
-    border-radius: 30px;
-    padding-left: 20px;
-} */
 .role-select-trigger{
-    box-shadow: 0 0  0 #fff;
-    width: 300px;
-    padding: 0 30px;
+    color: #fff;
+    width: 100%;
+    border-radius: 30px;
+    box-shadow: none;
     text-align: center;
+    cursor: pointer;
 }
 .role-select-content{
-    background: transparent;
-    background: #000000dc;
-    color: #999;
+    background: #000;
+    cursor: pointer;
+    color: #fff;
 }
 .login form button{
-    border: 1px solid #cccccc83;
-    margin: 10px 0;
-    padding: 5px 0;
-    float: right;
-    cursor: pointer;
-    width: 100px;
-    color: #999;
-    transition: 0.3s;
 }
 .login-bottom{
+    margin: 20px 0;
     display: flex;
     justify-content: space-between;
     align-items: center;
+}
+.login-bottom button{
+    padding: 5px 20px;
+    cursor: pointer;
+    background: #fff;
 }
 .login-bottom a{
     transition: 0.3s;
@@ -128,9 +122,6 @@
 .login-bottom a:hover{
     color: #fff;
     
-}
-.login form button:hover{
-    color: #fff;
 }
 
 

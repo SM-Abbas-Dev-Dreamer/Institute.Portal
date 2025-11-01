@@ -12,8 +12,8 @@ import {
   arrayUnion,
   getDoc,
 } from "firebase/firestore";
-import { Button } from "@/components/ui/button";
-import ClassSelect from "../components/selectclass/page";
+import { Button } from "../../components/ui/button";
+import ClassSelect from "../components/selectclass/classSelect";
 import "./TimetableForm.css";
 import {
   Select,
@@ -21,7 +21,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from "../../components/ui/select";
 
 export default function TimetableForm({ teachers }) {
   // 🧩 Toast system (Custom — No dependency)

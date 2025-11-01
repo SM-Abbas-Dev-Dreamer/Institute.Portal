@@ -84,10 +84,12 @@ const Navbar = () => {
   }, [menuOpen]);
 
   return (
-    <div className="navbar">
+    <div className="navbar bg-amber-800">
       <div className="logo">
         <Link href="/">LOGO</Link>
+        
       </div>
+      Geejdfghjkl
 
       {/* ✅ Attach ref here */}
       <div ref={menuRef} className={`navigation ${menuOpen ? "active" : ""}`}>

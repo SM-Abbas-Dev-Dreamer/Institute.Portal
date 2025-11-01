@@ -1,57 +1,53 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { db, auth } from "../../../firebaseconfig";
-import { collection, getDocs, query, where } from "firebase/firestore";
+import { auth } from "../../../firebaseconfig";
 import "./student-assign.css";
+
+// 🔹 Import API functions
+import { fetchStudentClass, fetchAssignmentsByClass } from "../../lib/assigment/assigementApi";
 
 function StudentAssignments() {
   const [assignments, setAssignments] = useState([]);
   const [studentClass, setStudentClass] = useState("");
   const [user, setUser] = useState(null);
 
+  // 🔹 Auth listener
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(async (currentUser) => {
       if (currentUser) {
         setUser(currentUser);
-
-        // 🔹 Get student class from "users" collection
-        const q = query(collection(db, "users"), where("email", "==", currentUser.email));
-        const querySnapshot = await getDocs(q);
-        if (!querySnapshot.empty) {
-          const data = querySnapshot.docs[0].data();
-          setStudentClass(data.className);
+        try {
+          const className = await fetchStudentClass(currentUser.email);
+          setStudentClass(className);
+        } catch (error) {
+          console.error("Error fetching student class:", error);
         }
       }
     });
-
     return () => unsubscribe();
   }, []);
 
-  // 🔹 Fetch assignments for the student's class
+  // 🔹 Fetch assignments when class is known
   useEffect(() => {
-    const fetchAssignments = async () => {
+    const loadAssignments = async () => {
       if (!studentClass) return;
-      const q = query(collection(db, "assignments"), where("className", "==", studentClass));
-      const querySnapshot = await getDocs(q);
-      const data = querySnapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
-      setAssignments(data);
+      try {
+        const data = await fetchAssignmentsByClass(studentClass);
+        setAssignments(data);
+      } catch (error) {
+        console.error("Error loading assignments:", error);
+      }
     };
-
-    fetchAssignments();
+    loadAssignments();
   }, [studentClass]);
 
-  // 🔹 Countdown Timer Function
+  // 🔹 Countdown Timer
   const calculateTimeLeft = (lastDate) => {
     const difference = new Date(lastDate).getTime() - new Date().getTime();
     if (difference <= 0) return "Expired";
-
     const hours = Math.floor(difference / (1000 * 60 * 60));
     const minutes = Math.floor((difference / (1000 * 60)) % 60);
     const seconds = Math.floor((difference / 1000) % 60);
-
     return `${hours}h ${minutes}m ${seconds}s`;
   };
 

@@ -18,7 +18,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
+} from "../../components/ui/table";
 
 import {
   Select,
@@ -26,9 +26,9 @@ import {
   SelectContent,
   SelectItem,
   SelectValue,
-} from "@/components/ui/select";
+} from "../../components/ui/select";
 
-import { Button } from "@/components/ui/button";
+import { Button } from "../../components/ui/button";
 import "./CreateClassPage.css";
 
 export default function CreateClassPage() {
@@ -221,7 +221,8 @@ export default function CreateClassPage() {
         <div className="class-list mt-4">
           <h2></h2>
           {classes.length === 0 ? (
-            <Loading2/>
+            // <Loading2/>
+            <p>Hello</p>
           ) : (
             <Table className="mt-3 border rounded-lg">
               <TableHeader>

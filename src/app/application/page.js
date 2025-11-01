@@ -2,38 +2,35 @@
 
 import React, { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
+import { useForm } from "react-hook-form";
 import { auth, db } from "../../../firebaseconfig";
-import {
-  doc,
-  getDoc,
-  addDoc,
-  collection,
-  serverTimestamp,
-  query,
-  where,
-  getDocs,
-  orderBy,
-} from "firebase/firestore";
+import { doc, getDoc } from "firebase/firestore";
 import { onAuthStateChanged } from "firebase/auth";
+import { submitApplication, fetchUserApplications } from "../../lib/application/applicationApi";
 
 const ReactQuill = dynamic(() => import("react-quill-new"), { ssr: false });
 import "react-quill-new/dist/quill.snow.css";
 import "./application.css";
 
 const ApplicationPage = () => {
-  const [applicationText, setApplicationText] = useState("");
   const [userData, setUserData] = useState(null);
-  const [message, setMessage] = useState("");
   const [applications, setApplications] = useState([]);
+  const [message, setMessage] = useState("");
+  const [applicationText, setApplicationText] = useState("");
 
+  const { handleSubmit, reset } = useForm();
+
+  // 🔹 Load current user and their applications
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       if (currentUser) {
         const userRef = doc(db, "users", currentUser.uid);
         const userSnap = await getDoc(userRef);
         if (userSnap.exists()) {
-          setUserData(userSnap.data());
-          fetchUserApplications(currentUser.uid);
+          const user = userSnap.data();
+          setUserData(user);
+          const apps = await fetchUserApplications(currentUser.uid);
+          setApplications(apps);
         } else {
           console.log("❌ No user document found for UID:", currentUser.uid);
         }
@@ -45,27 +42,8 @@ const ApplicationPage = () => {
     return () => unsubscribe();
   }, []);
 
-  const fetchUserApplications = async (uid) => {
-    try {
-      const q = query(
-        collection(db, "applications"),
-        where("uid", "==", uid),
-        orderBy("createdAt", "desc")
-      );
-      const querySnapshot = await getDocs(q);
-      const apps = querySnapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
-      setApplications(apps);
-    } catch (error) {
-      console.error("Error fetching applications:", error);
-    }
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
+  // 🔹 Submit Form
+  const onSubmit = async () => {
     if (!applicationText.trim()) {
       setMessage("❌ Please write your application before sending.");
       return;
@@ -77,27 +55,19 @@ const ApplicationPage = () => {
     }
 
     try {
-      await addDoc(collection(db, "applications"), {
-        uid: auth.currentUser.uid,
-        name: userData.name || "Unknown",
-        email: userData.email || "Unknown",
-        rollNumber: userData.rollNumber || "N/A",
-        role: userData.role || "Student",
-        applicationText,
-        date: new Date().toLocaleString(),
-        status: "Pending",
-        createdAt: serverTimestamp(),
-      });
-
-      setApplicationText("");
+      await submitApplication(userData, applicationText);
       setMessage("✅ Application sent successfully!");
-      fetchUserApplications(auth.currentUser.uid);
+      setApplicationText("");
+      reset();
+      const apps = await fetchUserApplications(auth.currentUser.uid);
+      setApplications(apps);
     } catch (error) {
       console.error("Error sending application:", error);
       setMessage("❌ Failed to send application.");
     }
   };
 
+  // 🔹 React Quill settings
   const modules = {
     toolbar: [
       [{ header: [1, 2, 3, false] }],
@@ -126,10 +96,10 @@ const ApplicationPage = () => {
   return (
     <div className="application-page">
       <div className="application-card">
-        <h2 className="page-title"> Submit Your Application</h2>
+        <h2 className="page-title">Submit Your Application</h2>
         {message && <p className="message">{message}</p>}
 
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit(onSubmit)}>
           <ReactQuill
             theme="snow"
             value={applicationText}

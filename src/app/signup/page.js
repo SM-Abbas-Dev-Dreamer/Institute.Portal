@@ -2,22 +2,9 @@
 import React, { useState } from "react";
 import "./signup.css";
 import Link from "next/link";
-import {
-  createUserWithEmailAndPassword,
-  fetchSignInMethodsForEmail,
-} from "firebase/auth";
-import { auth, db } from "../../../firebaseconfig.js";
-import {
-  doc,
-  getDocs,
-  getDoc,
-  collection,
-  updateDoc,
-  setDoc,
-  query,
-  where,
-} from "firebase/firestore";
 import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
+import { Alert, AlertTitle } from "../../components/ui/alert";
 import {
   Select,
   SelectContent,
@@ -26,198 +13,86 @@ import {
   SelectLabel,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from "../../components/ui/select";
+import { createUserApi } from "../../lib/signup/signupApi";
+import { suggestEmail } from "../../lib/signup/route";
+import { useEffect } from "react";
 
 const SignUp = () => {
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    suggestedEmail: "",
-    password: "",
-    role: "student",
-    address: "",
-    phone: "",
-    cnic: "",
-    previousDiscipline: "",
-    className: "",
-  });
+  const {
+    register,
+    handleSubmit,
+    watch,
+    setValue,
+    formState: { errors },
+  } = useForm();
 
-  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
   const router = useRouter();
+  useEffect(() => {
+    setValue("role", "student");
+  }, [setValue]);
 
-  // 🔹 Available class names (for students)
   const availableClasses = ["BSCS", "BSIT", "BSSE", "BBA", "MBA"];
+  const role = watch("role", "student");
 
-  // 🔹 Custom domain for email generation
-  const emailDomain = "@web.com";
-
-  // 🔹 Universal input handler
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
-
-  // 🔹 CNIC format handler
-  const handleCnicChange = (e) => {
-    let value = e.target.value.replace(/\D/g, "");
-
-    if (value.length > 5) {
-      value = value.slice(0, 5) + "-" + value.slice(5);
-    }
-
-    if (value.length > 13) {
-      value = value.slice(0, 13) + "-" + value.slice(13);
-    }
-
-    if (value.length > 15) {
-      value = value.slice(0, 15);
-    }
-
-    setFormData((prev) => ({ ...prev, cnic: value }));
-  };
-
-  // 🔹 Phone format handler
-  const handlePhoneChange = (e) => {
-    let value = e.target.value.replace(/\D/g, "");
-
-    if (value.length > 4) {
-      value = value.slice(0, 4) + "-" + value.slice(4);
-    }
-
-    if (value.length > 12) {
-      value = value.slice(0, 12);
-    }
-
-    setFormData((prev) => ({ ...prev, phone: value }));
-  };
-
-  // 🔹 Generate random roll number
-  const generateRollNumber = async () => {
-    const counterRef = doc(db, "metadata", "rollNumberCounter");
-    const docSnap = await getDoc(counterRef);
-
-    if (docSnap.exists()) {
-      const lastRoll = docSnap.data().lastRoll || 1000;
-      const newRoll = lastRoll + 1;
-
-      await updateDoc(counterRef, { lastRoll: newRoll });
-
-      return newRoll.toString();
-    } else {
-      await setDoc(counterRef, { lastRoll: 1000 });
-      return "1000";
-    }
-  };
-
-  // 🔹 Suggest email based on name
   const handleNameChange = async (e) => {
-    const inputName = e.target.value.trim();
-    setFormData((prev) => ({ ...prev, name: inputName }));
-
-    if (inputName) {
-      let baseEmail = inputName.toLowerCase().replace(/\s+/g, "");
-      let emailSuggestion = `${baseEmail}${emailDomain}`;
-
-      const q = query(
-        collection(db, "users"),
-        where("email", "==", emailSuggestion)
-      );
-      const querySnapshot = await getDocs(q);
-
-      if (!querySnapshot.empty) {
-        let counter = 1;
-        let newEmail = `${baseEmail}${counter}${emailDomain}`;
-        while (
-          !(
-            await getDocs(
-              query(collection(db, "users"), where("email", "==", newEmail))
-            )
-          ).empty
-        ) {
-          counter++;
-          newEmail = `${baseEmail}${counter}${emailDomain}`;
-        }
-        emailSuggestion = newEmail;
-      }
-
-      setFormData((prev) => ({
-        ...prev,
-        email: emailSuggestion,
-        suggestedEmail: emailSuggestion,
-      }));
+    const name = e.target.value;
+    setValue("name", name);
+    if (name.trim()) {
+      const suggested = await suggestEmail(name);
+      setValue("email", suggested);
     } else {
-      setFormData((prev) => ({ ...prev, email: "", suggestedEmail: "" }));
+      setValue("email", "");
     }
   };
 
-  // 🔹 Handle submit
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const onSubmit = async (data) => {
     setError("");
     setLoading(true);
 
+    // ✅ Ensure default role
+    if (!data.role) data.role = "student";
+
+    console.log("📤 Signup data before sending:", data);
+
     try {
-      // Step 1: Check if email already exists in Firebase Auth
-      const methods = await fetchSignInMethodsForEmail(auth, formData.email);
-      if (methods.length > 0) {
-        setError("This email is already registered.");
-        setLoading(false);
-        return;
-      }
-
-      // Step 2: Create user in Firebase Authentication
-      const userCredential = await createUserWithEmailAndPassword(
-        auth,
-        formData.email,
-        formData.password
-      );
-      const user = userCredential.user;
-
-      // Step 3: Generate roll number
-      const rollNumber = await generateRollNumber();
-
-      // Step 4: Save user data in Firestore
-      await setDoc(doc(db, "users", user.uid), {
-        uid: user.uid,
-        name: formData.name,
-        email: formData.email,
-        address: formData.address,
-        phone: formData.phone,
-        cnic: formData.cnic,
-        previousDiscipline: formData.previousDiscipline,
-        role: formData.role,
-        className: formData.role === "student" ? formData.className : null,
-        rollNumber: formData.role === "student" ? rollNumber : null,
-        createdAt: new Date(),
-      });
-
-      // Step 5: Redirect based on role (commented same as before)
-      // if (formData.role === "admin") router.push("/admin");
-      // else if (formData.role === "teacher") router.push("/teacher");
-      // else router.push("/users");
+      await createUserApi(data);
+      router.push("/users"); // redirect
     } catch (err) {
-      console.error(err);
-      setError("Failed to create account. Please try again.");
+      setError(err.message);
     } finally {
       setLoading(false);
     }
+  };
+
+  // --- format handlers ---
+  const formatCnic = (value) => {
+    let v = value.replace(/\D/g, "");
+    if (v.length > 5) v = v.slice(0, 5) + "-" + v.slice(5);
+    if (v.length > 13) v = v.slice(0, 13) + "-" + v.slice(13);
+    return v.slice(0, 15);
+  };
+  const formatPhone = (value) => {
+    let v = value.replace(/\D/g, "");
+    if (v.length > 4) v = v.slice(0, 4) + "-" + v.slice(4);
+    return v.slice(0, 12);
   };
 
   return (
     <div className="signup-body">
       <div className="signup">
         <h1>Create User</h1>
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit(onSubmit)}>
           {/* ---- Name & Email ---- */}
           <div className="input-line-layout">
             <div className="input-box">
               <input
                 type="text"
-                name="name"
-                value={formData.name}
-                onChange={handleNameChange}
                 required
+                {...register("name", { required: "Name is required" })}
+                onChange={handleNameChange}
               />
               <i className="fa-solid fa-user"></i>
               <label>Name</label>
@@ -226,11 +101,10 @@ const SignUp = () => {
             <div className="input-box">
               <input
                 type="email"
-                name="email"
-                value={formData.email}
-                placeholder="Email (Auto Suggested)"
-                readOnly
                 required
+                {...register("email")}
+                readOnly
+                placeholder="Email (Auto Suggested)"
               />
             </div>
           </div>
@@ -240,10 +114,14 @@ const SignUp = () => {
             <div className="input-box">
               <input
                 type="password"
-                name="password"
-                value={formData.password}
-                onChange={handleInputChange}
                 required
+                {...register("password", {
+                  required: "Password is required",
+                  minLength: {
+                    value: 6,
+                    message: "Password must be at least 6 characters",
+                  },
+                })}
               />
               <i className="fa-solid fa-key"></i>
               <label>Password</label>
@@ -252,40 +130,35 @@ const SignUp = () => {
             <div className="input-box">
               <input
                 type="text"
-                name="address"
-                value={formData.address}
-                onChange={handleInputChange}
                 required
+                {...register("address", { required: "Address is required" })}
               />
               <i className="fa-solid fa-location-dot"></i>
               <label>Address</label>
             </div>
           </div>
 
-          {/* ---- Phone ---- */}
+          {/* ---- Phone & CNIC ---- */}
           <div className="input-line-layout">
             <div className="input-box">
               <input
                 type="text"
-                name="phone"
-                value={formData.phone}
-                onChange={handlePhoneChange}
                 required
+                {...register("phone", { required: "Phone number is required" })}
+                onChange={(e) => setValue("phone", formatPhone(e.target.value))}
                 maxLength={12}
               />
               <i className="fa-solid fa-phone"></i>
               <label>Phone</label>
             </div>
 
-            {/* ---- CNIC ---- */}
             <div className="input-box">
               <input
                 type="text"
-                name="cnic"
-                value={formData.cnic}
-                onChange={handleCnicChange}
-                maxLength={15}
                 required
+                {...register("cnic", { required: "CNIC is required" })}
+                onChange={(e) => setValue("cnic", formatCnic(e.target.value))}
+                maxLength={15}
               />
               <i className="fa-solid fa-id-card"></i>
               <label>CNIC Number</label>
@@ -297,10 +170,9 @@ const SignUp = () => {
             <div className="input-box">
               <input
                 type="text"
-                name="previousDiscipline"
-                value={formData.previousDiscipline}
-                onChange={handleInputChange}
-                required
+                {...register("previousDiscipline", {
+                  required: "Previous discipline is required",
+                })}
               />
               <i className="fa-solid fa-graduation-cap"></i>
               <label>College Discipline</label>
@@ -309,17 +181,14 @@ const SignUp = () => {
 
           {/* ---- Role Selection ---- */}
           <div className="selection-section">
-            {/* ---- Role Selection ---- */}
             <Select
-              value={formData.role}
-              onValueChange={(value) =>
-                setFormData((prev) => ({ ...prev, role: value }))
-              }
+              value={role}
+              onValueChange={(value) => setValue("role", value)}
             >
-              <SelectTrigger className="w-[180px] select-triger ">
+              <SelectTrigger className="w-[180px] select-triger">
                 <SelectValue placeholder="Select Role" />
               </SelectTrigger>
-              <SelectContent className="  " >
+              <SelectContent>
                 <SelectGroup>
                   <SelectLabel>Roles</SelectLabel>
                   <SelectItem value="student">Student</SelectItem>
@@ -329,22 +198,16 @@ const SignUp = () => {
               </SelectContent>
             </Select>
 
-            {/* ---- Class Selection (only for students) ---- */}
-            {formData.role === "student" && (
-              <Select
-                value={formData.className}
-                onValueChange={(value) =>
-                  setFormData((prev) => ({ ...prev, className: value }))
-                }
-              >
+            {role === "student" && (
+              <Select onValueChange={(value) => setValue("className", value)}>
                 <SelectTrigger className="w-[180px] select-triger">
                   <SelectValue placeholder="Select Class" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectGroup>
                     <SelectLabel>Classes</SelectLabel>
-                    {availableClasses.map((cls, index) => (
-                      <SelectItem key={index} value={cls}>
+                    {availableClasses.map((cls, i) => (
+                      <SelectItem key={i} value={cls}>
                         {cls}
                       </SelectItem>
                     ))}
@@ -354,10 +217,15 @@ const SignUp = () => {
             )}
           </div>
 
-          {/* ---- Error message ---- */}
-          {error && <p style={{ color: "red" }}>{error}</p>}
+          {/* ---- Error Message ---- */}
+          {error && (
+            <Alert severity="error" sx={{ mt: 2 }}>
+              <AlertTitle>Error</AlertTitle>
+              {error}
+            </Alert>
+          )}
 
-          {/* ---- Submit button ---- */}
+          {/* ---- Submit Button ---- */}
           <div className="signup-bottom">
             <button type="submit" disabled={loading}>
               {loading ? "Creating Account..." : "Create Account"}

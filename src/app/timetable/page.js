@@ -4,10 +4,10 @@ import { db } from "../../../firebaseconfig";
 import { collection, onSnapshot, query, where } from "firebase/firestore";
 import TimetableForm from "./timetableform";
 import TimetableTable from "./table";
-import ClassSelect from "../components/selectclass/page";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import ClassSelect from "../components/selectclass/classSelect";
+import { Card, CardContent, CardHeader, CardTitle } from "../../components/ui/card";
 import "./AdminTimetablePage.css";
-import { Button } from "@/components/ui/button";
+import { Button } from "../../components/ui/button";
 import {
   Dialog,
   DialogClose,
@@ -17,9 +17,9 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+} from "../../components/ui/dialog";
+import { Input } from "../../components/ui/input";
+import { Label } from "../../components/ui/label";
 
 export default function AdminTimetablePage() {
   const [classes, setClasses] = useState([]);

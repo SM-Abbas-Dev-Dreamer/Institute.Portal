@@ -8,8 +8,22 @@ import {
   doc,
   deleteDoc,
 } from "firebase/firestore";
-import { getAuth, deleteUser } from "firebase/auth";
 import "./allusers.css";
+
+// 🔹 Shadcn components import
+import {
+  Tooltip,
+  TooltipTrigger,
+  TooltipContent,
+  TooltipProvider,
+} from "../../components/ui/tooltip";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../../components/ui/select";
 
 const AllUsers = () => {
   const [users, setUsers] = useState([]);
@@ -25,8 +39,18 @@ const AllUsers = () => {
     className: "",
   });
 
-  // 🔹 Classes array
   const classes = ["BSCS", "BSIT", "BBA", "MBA", "ICS", "FSC"];
+
+  // 🔹 Columns setup for show/hide
+  const allColumns = [
+    "Name",
+    "Email",
+    "Role",
+    "Class",
+    "Status",
+    "Actions",
+  ];
+  const [visibleColumns, setVisibleColumns] = useState(allColumns);
 
   // 🔹 Fetch all users
   const fetchUsers = async () => {
@@ -48,24 +72,7 @@ const AllUsers = () => {
     fetchUsers();
   }, []);
 
-  // 🔹 Role change
-  const handleRoleChange = async (userId, newRole) => {
-    try {
-      const userRef = doc(db, "users", userId);
-      await updateDoc(userRef, { role: newRole });
-      setMessage("✅ Role updated successfully!");
-      setUsers((prev) =>
-        prev.map((user) =>
-          user.id === userId ? { ...user, role: newRole } : user
-        )
-      );
-    } catch (error) {
-      console.error("Error updating role:", error);
-      setMessage("❌ Failed to update role!");
-    }
-  };
-
-  // 🔹 Delete user (Auth + Firestore)
+  // 🔹 Delete user
   const handleDelete = async (userId) => {
     if (!window.confirm("Are you sure you want to delete this user?")) return;
     try {
@@ -124,9 +131,7 @@ const AllUsers = () => {
     });
   };
 
-  // 🔹 Handle edit input
-  const handleEditChange = (e) => {
-    const { name, value } = e.target;
+  const handleEditChange = (name, value) => {
     setEditForm((prev) => ({ ...prev, [name]: value }));
   };
 
@@ -134,16 +139,9 @@ const AllUsers = () => {
   const saveEdit = async () => {
     try {
       const userRef = doc(db, "users", editingUser.id);
-      await updateDoc(userRef, {
-        name: editForm.name,
-        email: editForm.email,
-        role: editForm.role,
-        className: editForm.className,
-      });
+      await updateDoc(userRef, { ...editForm });
       setUsers((prev) =>
-        prev.map((u) =>
-          u.id === editingUser.id ? { ...u, ...editForm } : u
-        )
+        prev.map((u) => (u.id === editingUser.id ? { ...u, ...editForm } : u))
       );
       setMessage("✅ User updated successfully!");
       setEditingUser(null);
@@ -153,13 +151,22 @@ const AllUsers = () => {
     }
   };
 
-  // 🔹 Filter users
+  // 🔹 Filtered users
   const filteredUsers = users.filter((user) => {
     if (filterRole !== "all" && user.role !== filterRole) return false;
     if (filterRole === "student" && filterClass && user.className !== filterClass)
       return false;
     return true;
   });
+
+  // 🔹 Toggle columns visibility
+  const handleColumnToggle = (value) => {
+    setVisibleColumns((prev) =>
+      prev.includes(value)
+        ? prev.filter((col) => col !== value)
+        : [...prev, value]
+    );
+  };
 
   if (loading) return <h2 style={{ textAlign: "center" }}>Loading users...</h2>;
 
@@ -168,39 +175,60 @@ const AllUsers = () => {
       <h1>All Users</h1>
       {message && <p className="message">{message}</p>}
 
-      {/* 🔹 Filter Controls */}
-      <div className="filter-section">
-        <label>Filter by Role:</label>
-        <select
+      {/* 🔹 Filter Section */}
+      <div className="filter-section flex justify-center gap-7 my-5 ">
+        <Select
           value={filterRole}
-          onChange={(e) => {
-            setFilterRole(e.target.value);
+          onValueChange={(value) => {
+            setFilterRole(value);
             setFilterClass("");
           }}
         >
-          <option value="all">All</option>
-          <option value="student">Students</option>
-          <option value="teacher">Teachers</option>
-          <option value="admin">Admins</option>
-        </select>
+          <SelectTrigger className="w-[180px] select-triger">
+            <SelectValue placeholder="Select Role" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All</SelectItem>
+            <SelectItem value="student">Students</SelectItem>
+            <SelectItem value="teacher">Teachers</SelectItem>
+            <SelectItem value="admin">Admins</SelectItem>
+          </SelectContent>
+        </Select>
 
-        {/* 🔹 Class filter only when student selected */}
         {filterRole === "student" && (
-          <>
-            <label>Filter by Class:</label>
-            <select
-              value={filterClass}
-              onChange={(e) => setFilterClass(e.target.value)}
-            >
-              <option value="">All Classes</option>
+          <Select
+            value={filterClass}
+            onValueChange={(value) => setFilterClass(value)}
+          >
+            <SelectTrigger className="w-[180px] select-triger">
+              <SelectValue placeholder="Select Class" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Classes</SelectItem>
               {classes.map((cls, index) => (
-                <option key={index} value={cls}>
+                <SelectItem key={index} value={cls}>
                   {cls}
-                </option>
+                </SelectItem>
               ))}
-            </select>
-          </>
+            </SelectContent>
+          </Select>
         )}
+
+        {/* 🔹 Column Visibility Filter */}
+        <Select
+          onValueChange={(value) => handleColumnToggle(value)}
+        >
+          <SelectTrigger className="w-[220px] select-triger">
+            <SelectValue placeholder="Toggle Columns" />
+          </SelectTrigger>
+          <SelectContent>
+            {allColumns.map((col, index) => (
+              <SelectItem key={index} value={col}>
+                {visibleColumns.includes(col) ? `✅ ${col}` : col}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
 
       {/* 🔹 Users Table */}
@@ -208,12 +236,12 @@ const AllUsers = () => {
         <thead>
           <tr>
             <th>#</th>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Role</th>
-            <th>Class</th>
-            <th>Status</th>
-            <th>Actions</th>
+            {visibleColumns.includes("Name") && <th>Name</th>}
+            {visibleColumns.includes("Email") && <th>Email</th>}
+            {visibleColumns.includes("Role") && <th>Role</th>}
+            {visibleColumns.includes("Class") && <th>Class</th>}
+            {visibleColumns.includes("Status") && <th>Status</th>}
+            {visibleColumns.includes("Actions") && <th>Actions</th>}
           </tr>
         </thead>
         <tbody>
@@ -225,31 +253,65 @@ const AllUsers = () => {
             filteredUsers.map((user, index) => (
               <tr key={user.id}>
                 <td>{index + 1}</td>
-                <td>{user.name || "N/A"}</td>
-                <td>{user.email}</td>
-                <td>{user.role}</td>
-                <td>{user.className || "N/A"}</td>
-                <td>
-                  {user.activity === "stuckoff" ? (
-                    <span style={{ color: "red" }}>Stuck Off</span>
-                  ) : (
-                    <span style={{ color: "green" }}>Active</span>
-                  )}
-                </td>
-                <td>
-                  <button onClick={() => openEditModal(user)}>Edit</button>
-                  <button onClick={() => handleDelete(user.id)}>Delete</button>
+                {visibleColumns.includes("Name") && (
+                  <td>{user.name || "N/A"}</td>
+                )}
+                {visibleColumns.includes("Email") && <td>{user.email}</td>}
+                {visibleColumns.includes("Role") && <td>{user.role}</td>}
+                {visibleColumns.includes("Class") && (
+                  <td>{user.className || "N/A"}</td>
+                )}
+                {visibleColumns.includes("Status") && (
+                  <td>
+                    {user.activity === "stuckoff" ? (
+                      <span style={{ color: "red" }}>Stuck Off</span>
+                    ) : (
+                      <span style={{ color: "green" }}>Active</span>
+                    )}
+                  </td>
+                )}
+                {visibleColumns.includes("Actions") && (
+                  <td>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <button onClick={() => openEditModal(user)}>
+                            <i className="fa-solid fa-pencil p-2.5 bg-gray-800 text-amber-50 mx-1 rounded-2xl cursor-pointer"></i>
+                          </button>
+                        </TooltipTrigger>
+                        <TooltipContent>Edit</TooltipContent>
+                      </Tooltip>
 
-                  {user.activity === "stuckoff" ? (
-                    <button onClick={() => handleRemoveStuckOff(user.id)}>
-                      Remove Stuck Off
-                    </button>
-                  ) : (
-                    <button onClick={() => handleStuckOff(user.id)}>
-                      Stuck Off
-                    </button>
-                  )}
-                </td>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <button onClick={() => handleDelete(user.id)}>
+                            <i className="fa-solid fa-trash p-2.5 bg-gray-800 text-white mx-1 rounded-2xl cursor-pointer"></i>
+                          </button>
+                        </TooltipTrigger>
+                        <TooltipContent>Delete</TooltipContent>
+                      </Tooltip>
+
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          {user.activity === "stuckoff" ? (
+                            <button onClick={() => handleRemoveStuckOff(user.id)}>
+                              <i className="fa-solid fa-user-check p-2.5 bg-gray-800 text-white mx-1 rounded-2xl cursor-pointer"></i>
+                            </button>
+                          ) : (
+                            <button onClick={() => handleStuckOff(user.id)}>
+                              <i className="fa-solid fa-ban p-2.5 bg-gray-800 text-white mx-1 rounded-2xl cursor-pointer"></i>
+                            </button>
+                          )}
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          {user.activity === "stuckoff"
+                            ? "Remove Stuck Off"
+                            : "Stuck Off"}
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </td>
+                )}
               </tr>
             ))
           )}
@@ -265,40 +327,49 @@ const AllUsers = () => {
             <input
               name="name"
               value={editForm.name}
-              onChange={handleEditChange}
+              onChange={(e) => handleEditChange("name", e.target.value)}
             />
             <label>Email:</label>
             <input
               name="email"
               value={editForm.email}
-              onChange={handleEditChange}
+              onChange={(e) => handleEditChange("email", e.target.value)}
             />
             <label>Role:</label>
-            <select
-              name="role"
+            <Select
               value={editForm.role}
-              onChange={handleEditChange}
+              onValueChange={(value) => handleEditChange("role", value)}
             >
-              <option value="student">Student</option>
-              <option value="teacher">Teacher</option>
-              <option value="admin">Admin</option>
-            </select>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Select Role" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="student">Student</SelectItem>
+                <SelectItem value="teacher">Teacher</SelectItem>
+                <SelectItem value="admin">Admin</SelectItem>
+              </SelectContent>
+            </Select>
 
             {editForm.role === "student" && (
               <>
                 <label>Class:</label>
-                <select
-                  name="className"
+                <Select
                   value={editForm.className}
-                  onChange={handleEditChange}
+                  onValueChange={(value) =>
+                    handleEditChange("className", value)
+                  }
                 >
-                  <option value="">Select Class</option>
-                  {classes.map((cls, index) => (
-                    <option key={index} value={cls}>
-                      {cls}
-                    </option>
-                  ))}
-                </select>
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select Class" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {classes.map((cls, index) => (
+                      <SelectItem key={index} value={cls}>
+                        {cls}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </>
             )}
 

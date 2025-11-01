@@ -1,11 +1,6 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import Navbar from "./components/navbar/navbar.js";
-import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
-import { AdminSidebar } from "@/components/ui/admin-sidebar";
-import { DashboardHeader } from "@/components/ui/dashboard-header";
-
-
+import ClientLayout from "./client-layout"; 
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -31,20 +26,9 @@ export default function RootLayout({ children }) {
           precedence="default"
         />
       </head>
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-       <SidebarProvider>
-      <AdminSidebar />
-      <SidebarInset>
-
-        <DashboardHeader/>
-        {children} {/* 👈 yahan har new page ka content render hoga */}
-      </SidebarInset>
-    </SidebarProvider>
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+        <ClientLayout>{children}</ClientLayout>
       </body>
     </html>
   );
 }
-
-

@@ -1,7 +1,7 @@
 "use client";
 import { memo } from "react";
 import { motion } from "framer-motion";
-import { Button } from "@/components/ui/button";
+import { Button } from "../ui/button";
 import { BarChart3, Calendar } from "lucide-react";
 const chartData = [
   { month: "Jan", value: 4000, growth: 12, color: "bg-blue-500" },
